@@ -1,5 +1,9 @@
-﻿@{
-    var user = TempData.Peek("User");
+﻿@using Newtonsoft.Json
+@{
+    User user = null;
+    //TempData.Remove("User"); // for testing purposes
+    var userjson = TempData.Peek("User");
+    if (userjson != null) user = JsonConvert.DeserializeObject<User>(userjson.ToString());
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -27,7 +31,7 @@
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
-                        @if (user is not null)
+                        @if (user != null)
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-page="/Post/Create">
@@ -45,10 +49,13 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" asp-area="">
                                 <partial name="Icons/_AccountIcon" />
-                                <span id="accountName">Account</span>
+                                <span id="accountName">
+                                    @if (user != null) @user.Username
+                                    else {<text>Account</text>}
+                                </span>
                             </a>
                             <ul class="dropdown-menu" id="lol">
-                                @if (user is not null)
+                                @if (user != null)
                                 {
                                     <li><a class="dropdown-item" asp-area="" asp-page="/Profile">Profile</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-page="/Profile/MyBlog">My blog</a></li>
@@ -56,7 +63,7 @@
                                 }
                                 else
                                 {
-                                    <li><a class="dropdown-item" asp-area="" asp-page="/Authentication">Log in</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-page="/Authentication/Index">Log in</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-page="/Authentication/SignIn">Sign in</a></li>
                                 }
                             </ul>
@@ -72,15 +79,11 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - BlogSite - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <partial name="_ServerErrorDisplay" />
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
