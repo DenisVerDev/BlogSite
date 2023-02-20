@@ -1,7 +1,7 @@
 ﻿@using Newtonsoft.Json
 @{
     User user = null;
-    //TempData.Remove("User"); // for testing purposes
+
     var userjson = TempData.Peek("User");
     if (userjson != null) user = JsonConvert.DeserializeObject<User>(userjson.ToString());
 }
@@ -59,7 +59,7 @@
                                 {
                                     <li><a class="dropdown-item" asp-area="" asp-page="/Profile">Profile</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-page="/Profile/MyBlog">My blog</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-page="/Profile">Logout</a></li>
+                                    <li><a class="dropdown-item" id="btn-logout" asp-area="">Logout</a></li>
                                 }
                                 else
                                 {
@@ -83,6 +83,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
+    <partial name="_LogoutVerification" />
     <partial name="_ServerErrorDisplay" />
 
     @await RenderSectionAsync("Scripts", required: false)
