@@ -1,5 +1,31 @@
 ﻿@page
 @model BlogSite.Pages.Authentication.IndexModel
 @{
+    ViewData["Title"] = "Log in";
 }
-<h1>Log in page</h1>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <form class="p-4 p-md-5 border rounded-3 bg-light" method="post">
+                <h2 class="text-center mb-4">Log In</h2>
+                <div class="form-group mb-4">
+                    <label class="form-label" asp-for="@Model.User.Username"></label>
+                    <input class="form-control" type="text" id="username" placeholder="Enter your username" asp-for="@Model.User.Username">
+                    <span class="text-danger" asp-validation-for="@Model.User.Username"></span>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="form-label" asp-for="@Model.User.Password"></label>
+                    <input class="form-control" type="password" id="password" placeholder="Enter your password" asp-for="@Model.User.Password">
+                    <span class="text-danger" asp-validation-for="@Model.User.Password"></span>
+                </div>
+                <button type="submit" class="btn btn-danger w-100">Log In</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

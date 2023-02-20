@@ -15,5 +15,20 @@ namespace BlogSite.Models.ServerValidations
 
             return ModelState.IsValid;
         }
+
+        public static async Task<bool> LogInAsync(ModelStateDictionary ModelState, BlogSiteContext db, User user)
+        {
+            // 1st step: check if user with entered username exists
+            // 2nd step: check if password is correct
+
+            var db_user = db.Users.Find(user.Username);
+
+            if (db_user == null) ModelState.AddModelError("User.Username", "There is no account with that username!");
+            else  if (!db_user.Password.Equals(user.Password)) ModelState.AddModelError("User.Password", "Wrong password!");
+
+            ModelState.Remove("User.Email"); // email is not neccesary in this validation
+
+            return ModelState.IsValid;
+        }
     }
 }
