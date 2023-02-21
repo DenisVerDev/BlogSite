@@ -17,6 +17,8 @@ public partial class BlogSiteContext : DbContext
 
     public virtual DbSet<Post> Posts { get; set; }
 
+    public virtual DbSet<Theme> Themes { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
 //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -31,35 +33,47 @@ public partial class BlogSiteContext : DbContext
 
             entity.HasIndex(e => e.PostId, "UK_PostId").IsUnique();
 
-            entity.Property(e => e.Title).HasMaxLength(200);
-            entity.Property(e => e.Author).HasMaxLength(100);
-            entity.Property(e => e.Content).HasMaxLength(1000);
+            entity.Property(e => e.Title).HasMaxLength(100);
             entity.Property(e => e.CreationDate).HasColumnType("date");
             entity.Property(e => e.LastUpdateDate).HasColumnType("date");
+            entity.Property(e => e.PathToContent).HasMaxLength(200);
             entity.Property(e => e.PostId).ValueGeneratedOnAdd();
+            entity.Property(e => e.Theme)
+                .HasMaxLength(100)
+                .IsUnicode(false);
 
-            entity.HasOne(d => d.AuthorNavigation).WithMany(p => p.PostsNavigation)
+            entity.HasOne(d => d.AuthorNavigation).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.Author)
                 .HasConstraintName("FK_PostAuthor");
+
+            entity.HasOne(d => d.ThemeNavigation).WithMany(p => p.Posts)
+                .HasForeignKey(d => d.Theme)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_PostTheme");
+        });
+
+        modelBuilder.Entity<Theme>(entity =>
+        {
+            entity.HasKey(e => e.Name).HasName("PK_Theme");
+
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Username).HasName("PK_User");
+            entity.HasKey(e => e.UserId).HasName("PK_User");
 
             entity.HasIndex(e => e.Email, "UK_UserEmail").IsUnique();
 
-            entity.Property(e => e.Username).HasMaxLength(100);
-            entity.Property(e => e.Email)
-                .HasMaxLength(100)
-                .IsUnicode(false);
-            entity.Property(e => e.Password)
-                .HasMaxLength(100)
-                .IsUnicode(false);
+            entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.Password).HasMaxLength(20);
+            entity.Property(e => e.Username).HasMaxLength(20);
 
             entity.HasMany(d => d.Authors).WithMany(p => p.Followers)
                 .UsingEntity<Dictionary<string, object>>(
-                    "FollowersAuthors",
+                    "FollowersAuthor",
                     r => r.HasOne<User>().WithMany()
                         .HasForeignKey("Author")
                         .HasConstraintName("FK_FAAuthor"),
@@ -71,13 +85,11 @@ public partial class BlogSiteContext : DbContext
                     {
                         j.HasKey("Follower", "Author");
                         j.ToTable("FollowersAuthors");
-                        j.IndexerProperty<string>("Follower").HasMaxLength(100);
-                        j.IndexerProperty<string>("Author").HasMaxLength(100);
                     });
 
             entity.HasMany(d => d.Followers).WithMany(p => p.Authors)
                 .UsingEntity<Dictionary<string, object>>(
-                    "FollowersAuthors",
+                    "FollowersAuthor",
                     r => r.HasOne<User>().WithMany()
                         .HasForeignKey("Follower")
                         .OnDelete(DeleteBehavior.ClientSetNull)
@@ -89,16 +101,14 @@ public partial class BlogSiteContext : DbContext
                     {
                         j.HasKey("Follower", "Author");
                         j.ToTable("FollowersAuthors");
-                        j.IndexerProperty<string>("Follower").HasMaxLength(100);
-                        j.IndexerProperty<string>("Author").HasMaxLength(100);
                     });
 
-            entity.HasMany(d => d.Posts).WithMany(p => p.Likers)
+            entity.HasMany(d => d.LikedPosts).WithMany(p => p.Likers)
                 .UsingEntity<Dictionary<string, object>>(
-                    "LikedPosts",
+                    "LikedPost",
                     r => r.HasOne<Post>().WithMany()
                         .HasPrincipalKey("PostId")
-                        .HasForeignKey("PostId")
+                        .HasForeignKey("LikedPost1")
                         .HasConstraintName("FK_LPPost"),
                     l => l.HasOne<User>().WithMany()
                         .HasForeignKey("Liker")
@@ -106,9 +116,9 @@ public partial class BlogSiteContext : DbContext
                         .HasConstraintName("FK_LPUser"),
                     j =>
                     {
-                        j.HasKey("Liker", "PostId").HasName("PK_LikedPost");
+                        j.HasKey("Liker", "LikedPost1").HasName("PK_LikedPost");
                         j.ToTable("LikedPosts");
-                        j.IndexerProperty<string>("Liker").HasMaxLength(100);
+                        j.IndexerProperty<int>("LikedPost1").HasColumnName("LikedPost");
                     });
         });
 

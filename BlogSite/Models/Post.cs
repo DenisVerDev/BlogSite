@@ -7,19 +7,21 @@ public partial class Post
 {
     public int PostId { get; set; }
 
+    public int Author { get; set; }
+
     public string Title { get; set; } = null!;
 
-    public string Author { get; set; } = null!;
+    public string PathToContent { get; set; } = null!;
 
-    public string Content { get; set; } = null!;
-
-    public byte[]? FrontImage { get; set; }
+    public string? Theme { get; set; }
 
     public DateTime CreationDate { get; set; }
 
     public DateTime LastUpdateDate { get; set; }
 
     public virtual User AuthorNavigation { get; set; } = null!;
+
+    public virtual Theme? ThemeNavigation { get; set; }
 
     public virtual ICollection<User> Likers { get; } = new List<User>();
 }
