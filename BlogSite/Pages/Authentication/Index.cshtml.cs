@@ -1,5 +1,5 @@
 using BlogSite.Models;
-using BlogSite.Models.ServerValidations;
+using BlogSite.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,36 +9,28 @@ namespace BlogSite.Pages.Authentication
 {
     public class IndexModel : PageModel
     {
-        private BlogSiteContext db;
+        private readonly BlogSiteContext db;
+        private readonly ClientService service;
 
         [BindProperty]
-        public User User { get; set; }
+        public User Client { get; set; }
 
         public IndexModel(BlogSiteContext db)
         {
             this.db = db;
+            this.service = ClientService.GetService(TempData);
         }
 
         public IActionResult OnGet()
         {
-            if (TempData.Peek("User") != null)
-                return RedirectToPage("../Index");
-
-            return Page();
+            return service.IsAuthenticated ? RedirectToPage("../Index") : Page(); // client can't log in if he is already authenticated
         }
 
         public async Task<IActionResult> OnPost()
         {
             try
             {
-                if(await UserServerValidation.LogInAsync(ModelState,db,User))
-                {
-                    User = await db.Users.Where(x => x.Username == User.Username).SingleAsync();
-
-                    TempData["User"] = JsonConvert.SerializeObject(User);
-
-                    return RedirectToPage("../Index");
-                }
+                if(await service.LogInAsync(ModelState, db, Client)) return RedirectToPage("../Index");
             }
             catch(Exception ex)
             {

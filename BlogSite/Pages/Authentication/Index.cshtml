@@ -10,14 +10,14 @@
             <form class="p-4 p-md-5 border rounded-3 bg-light" method="post">
                 <h2 class="text-center mb-4">Log In</h2>
                 <div class="form-group mb-4">
-                    <label class="form-label" asp-for="@Model.User.Username"></label>
-                    <input class="form-control" type="text" id="username" placeholder="Enter your username" asp-for="@Model.User.Username">
-                    <span class="text-danger" asp-validation-for="@Model.User.Username"></span>
+                    <label class="form-label" asp-for="@Model.Client.Email"></label>
+                    <input class="form-control" type="email" id="email" placeholder="Enter email address" asp-for="@Model.Client.Email">
+                    <span class="text-danger" asp-validation-for="@Model.Client.Email"></span>
                 </div>
                 <div class="form-group mb-4">
-                    <label class="form-label" asp-for="@Model.User.Password"></label>
-                    <input class="form-control" type="password" id="password" placeholder="Enter your password" asp-for="@Model.User.Password">
-                    <span class="text-danger" asp-validation-for="@Model.User.Password"></span>
+                    <label class="form-label" asp-for="@Model.Client.Password"></label>
+                    <input class="form-control" type="password" id="password" placeholder="Enter your password" asp-for="@Model.Client.Password">
+                    <span class="text-danger" asp-validation-for="@Model.Client.Password"></span>
                 </div>
                 <button type="submit" class="btn btn-danger w-100">Log In</button>
             </form>

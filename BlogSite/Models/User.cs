@@ -15,6 +15,7 @@ public partial class User
     [Required(ErrorMessage = "The email address field is required!")]
     [MinLength(6, ErrorMessage = "The minimum length for an email address is 6 characters.")]
     [MaxLength(100, ErrorMessage = "The maximum length for an email address is 100 characters.")]
+    [RegularExpression(@"\w+@\w+\.\w{2,}", ErrorMessage = "Please enter a valid email address.")]
     [Display(Name = "Email address")]
     public string Email { get; set; } = null!;
 

@@ -1,9 +1,6 @@
-﻿@using Newtonsoft.Json
-@{
-    User user = null;
-
-    var userjson = TempData.Peek("User");
-    if (userjson != null) user = JsonConvert.DeserializeObject<User>(userjson.ToString());
+﻿@{
+    ClientService service = ClientService.GetService(TempData);
+    User? client = service.Client;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -31,7 +28,7 @@
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
-                        @if (user != null)
+                        @if (client != null)
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-page="/Post/Create">
@@ -50,12 +47,12 @@
                             <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" asp-area="">
                                 <partial name="Icons/_AccountIcon" />
                                 <span id="accountName">
-                                    @if (user != null) @user.Username
+                                    @if (client != null) @client.Username
                                     else {<text>Account</text>}
                                 </span>
                             </a>
                             <ul class="dropdown-menu" id="lol">
-                                @if (user != null)
+                                @if (client != null)
                                 {
                                     <li><a class="dropdown-item" asp-area="" asp-page="/Profile">Profile</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-page="/Profile/MyBlog">My blog</a></li>

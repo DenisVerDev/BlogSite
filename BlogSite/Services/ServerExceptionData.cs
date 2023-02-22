@@ -1,12 +1,12 @@
-﻿namespace BlogSite.Models.ServerValidations
+﻿namespace BlogSite.Services
 {
     public class ServerExceptionData
     {
         ///<summary>Error message that will be displayed in the console</summary>
-        public string ConsoleMessage { get;}
+        public string ConsoleMessage { get; }
 
         ///<summary>Information that will be displayed directly to the client</summary>
-        public string ClientMessage { get;}
+        public string ClientMessage { get; }
 
         private readonly string StandartClientMessage = "We are sorry to inform you that a server error has occurred.";
         private readonly string StandartConsoleMessage = "Unknown server exception!";

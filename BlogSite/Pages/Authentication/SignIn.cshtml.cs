@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using BlogSite.Models;
-using BlogSite.Models.ServerValidations;
+using BlogSite.Services;
 using Newtonsoft.Json;
 
 namespace BlogSite.Pages.Authentication
@@ -9,36 +9,27 @@ namespace BlogSite.Pages.Authentication
     public class SignInModel : PageModel
     {
         private readonly BlogSiteContext db;
+        private readonly ClientService service;
 
         [BindProperty]
-        public User User { get; set; }
+        public User Client { get; set; }
 
         public SignInModel(BlogSiteContext db)
         {
             this.db = db;
+            this.service = ClientService.GetService(TempData);
         }
 
         public IActionResult OnGet()
         {
-            if (TempData.Peek("User") != null)
-                return RedirectToPage("../Index");
-
-            return Page();
+            return service.IsAuthenticated ? RedirectToPage("../Index") : Page(); // client can't sign in if he is already authenticated
         }
 
         public async Task<IActionResult> OnPost()
         {
             try
             {
-                if(await UserServerValidation.SignInAsync(ModelState,db, User))
-                {
-                    await db.Users.AddAsync(this.User);
-                    await db.SaveChangesAsync();
-
-                    TempData["User"] = JsonConvert.SerializeObject(this.User);
-
-                    return RedirectToPage("../Index");
-                }
+                if(await service.SignInAsync(ModelState, db, Client)) return RedirectToPage("../Index");
             }
             catch(Exception ex)
             {
