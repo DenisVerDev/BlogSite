@@ -13,7 +13,7 @@ public partial class Post
 
     public string PathToContent { get; set; } = null!;
 
-    public string? Theme { get; set; }
+    public int? Theme { get; set; }
 
     public DateTime CreationDate { get; set; }
 

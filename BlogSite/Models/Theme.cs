@@ -5,6 +5,8 @@ namespace BlogSite.Models;
 
 public partial class Theme
 {
+    public int ThemeId { get; set; }
+
     public string Name { get; set; } = null!;
 
     public byte[] ThemeImage { get; set; } = null!;

@@ -38,9 +38,6 @@ public partial class BlogSiteContext : DbContext
             entity.Property(e => e.LastUpdateDate).HasColumnType("date");
             entity.Property(e => e.PathToContent).HasMaxLength(200);
             entity.Property(e => e.PostId).ValueGeneratedOnAdd();
-            entity.Property(e => e.Theme)
-                .HasMaxLength(100)
-                .IsUnicode(false);
 
             entity.HasOne(d => d.AuthorNavigation).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.Author)
@@ -54,8 +51,11 @@ public partial class BlogSiteContext : DbContext
 
         modelBuilder.Entity<Theme>(entity =>
         {
-            entity.HasKey(e => e.Name).HasName("PK_Theme");
+            entity.HasKey(e => e.ThemeId).HasName("PK_Theme");
 
+            entity.HasIndex(e => e.Name, "UK_ThemeName").IsUnique();
+
+            entity.Property(e => e.ThemeId).ValueGeneratedOnAdd();
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .IsUnicode(false);
