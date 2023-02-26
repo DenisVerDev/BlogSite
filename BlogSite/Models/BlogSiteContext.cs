@@ -36,7 +36,6 @@ public partial class BlogSiteContext : DbContext
             entity.Property(e => e.Title).HasMaxLength(100);
             entity.Property(e => e.CreationDate).HasColumnType("date");
             entity.Property(e => e.LastUpdateDate).HasColumnType("date");
-            entity.Property(e => e.PathToContent).HasMaxLength(200);
             entity.Property(e => e.PostId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.AuthorNavigation).WithMany(p => p.Posts)

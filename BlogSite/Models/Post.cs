@@ -14,7 +14,7 @@ public partial class Post
     [StringLength(100,MinimumLength = 3, ErrorMessage = "The title must be between 3 and 100 characters in length.")]
     public string Title { get; set; } = null!;
 
-    public string PathToContent { get; set; } = null!;
+    public string Content { get; set; } = null!;
 
     [Required(ErrorMessage = "The theme field is required!")]
     [Display(Name = "Post's theme")]
