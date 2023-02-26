@@ -7,58 +7,21 @@ namespace BlogSite.Services
 {
     public class ClientService
     {
-        private static ClientService service;
-        private static object locker = new object();
-
         private const string TempClientKey = "Client";
 
         private ITempDataDictionary TempData;
 
-        private User? client;
-
-        public User? Client
-        {
-            get
-            {
-                if (client == null)
-                    client = GetClient();
-
-                return client;
-            }
-
-            private set
-            {
-                client = value;
-                WriteClient();
-            }
-        }
-
         public bool IsAuthenticated
         {
-            get { return client != null; }
+            get { return TempData.Peek(TempClientKey) != null; }
         }
 
-        private ClientService(ITempDataDictionary TempData)
+        public ClientService(ITempDataDictionary TempData)
         {
             this.TempData = TempData;
         }
 
-        public static ClientService GetService(ITempDataDictionary TempData)
-        {
-            if (service == null)
-            {
-                lock (locker)
-                {
-                    if (service == null) service = new ClientService(TempData);
-                }
-            }
-                
-            return service;
-        }
-
-        //--------- Instance's methods down here-----------
-
-        private User? GetClient()
+        public User? GetDeserializedClient()
         {
             try
             {
@@ -75,33 +38,21 @@ namespace BlogSite.Services
             return null;
         }
 
-        private void WriteClient()
+        public void SaveClient(User? client)
         {
-            if (client != null) TempData[TempClientKey] = JsonConvert.SerializeObject(client);
-            else TempData.Remove(TempClientKey);
-        }
-
-        public void Logout()
-        {
-            Client = null;
+            TempData[TempClientKey] = client != null ? JsonConvert.SerializeObject(client) : null;
         }
 
         public async Task<bool> LogInAsync(ModelStateDictionary ModelState, BlogSiteContext db, User LoginUser)
         {
-            // 1st step: check if user with entered email address exists
-            // 2nd step: check if password is correct
-            // 3rd step: remove unnecessary check
-
             var db_user = db.Users.Where(x => x.Email == LoginUser.Email).FirstOrDefault();
 
-            if(db_user == null) ModelState.AddModelError($"{TempClientKey}.Email", "There is no account with that email!");
-            else if(!db_user.Password.Equals(LoginUser.Password))
+            if(db_user != null)
             {
-                db_user = null;
-                ModelState.AddModelError($"{TempClientKey}.Password", "Wrong password!");
+                if (db_user.Password.Equals(LoginUser.Password)) this.SaveClient(db_user);
+                else ModelState.AddModelError($"{TempClientKey}.Password", "Wrong password!");
             }
-
-            Client = db_user;
+            else ModelState.AddModelError($"{TempClientKey}.Email", "There is no account with that email!");
 
             ModelState.Remove($"{TempClientKey}.Username"); // username check is not necessary
 
@@ -115,13 +66,9 @@ namespace BlogSite.Services
                 db.Users.Add(SigninUser);
                 db.SaveChanges();
 
-                Client = SigninUser;
+                this.SaveClient(SigninUser);
             }
-            else
-            {
-                Client = null;
-                ModelState.AddModelError($"{TempClientKey}.Email", "This email address is already taken!");
-            }
+            else ModelState.AddModelError($"{TempClientKey}.Email", "This email address is already taken!");
 
             return ModelState.IsValid;
         }

@@ -1,6 +1,6 @@
 ﻿@{
-    ClientService service = ClientService.GetService(TempData);
-    User? client = service.Client;
+    ClientService service = new ClientService(TempData);
+    User? client = service.GetDeserializedClient();
 }
 <!DOCTYPE html>
 <html lang="en">

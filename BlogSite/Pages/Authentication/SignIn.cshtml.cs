@@ -9,7 +9,6 @@ namespace BlogSite.Pages.Authentication
     public class SignInModel : PageModel
     {
         private readonly BlogSiteContext db;
-        private readonly ClientService service;
 
         [BindProperty]
         public User Client { get; set; }
@@ -17,22 +16,25 @@ namespace BlogSite.Pages.Authentication
         public SignInModel(BlogSiteContext db)
         {
             this.db = db;
-            this.service = ClientService.GetService(TempData);
         }
 
         public IActionResult OnGet()
         {
+            ClientService service = new ClientService(TempData);
             return service.IsAuthenticated ? RedirectToPage("../Index") : Page(); // client can't sign in if he is already authenticated
         }
 
         public async Task<IActionResult> OnPost()
         {
+            ClientService service = new ClientService(TempData);
+
             try
             {
                 if(await service.SignInAsync(ModelState, db, Client)) return RedirectToPage("../Index");
             }
             catch(Exception ex)
             {
+                service.SaveClient(null);
                 ViewData["ServerExceptionData"] = new ServerExceptionData(ex);
             }
 

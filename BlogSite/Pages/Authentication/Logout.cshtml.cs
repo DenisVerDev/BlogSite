@@ -6,16 +6,15 @@ namespace BlogSite.Pages.Authentication
 {
     public class LogoutModel : PageModel
     {
-        private readonly ClientService service;
 
         public LogoutModel()
         {
-            this.service = ClientService.GetService(TempData);
         }
 
         public IActionResult OnGet()
         {
-            this.service.Logout();
+            ClientService service = new ClientService(TempData);
+            service.SaveClient(null);
 
             return RedirectToPage("Index");
         }

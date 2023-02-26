@@ -10,7 +10,6 @@ namespace BlogSite.Pages.Post
     public class CreateModel : PageModel
     {
         private readonly BlogSiteContext db;
-        private readonly ClientService service;
 
         public List<SelectListItem> Themes { get; private set; }
 
@@ -23,11 +22,11 @@ namespace BlogSite.Pages.Post
         public CreateModel(BlogSiteContext db)
         {
             this.db = db;
-            this.service = ClientService.GetService(TempData);
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
+            ClientService service = new ClientService(TempData);
             if(service.IsAuthenticated)
             {
                 Themes = await db.Themes.Select(x=> new SelectListItem(x.Name, x.ThemeId.ToString())).ToListAsync();
