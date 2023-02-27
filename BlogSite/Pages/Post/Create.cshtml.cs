@@ -16,9 +16,6 @@ namespace BlogSite.Pages.Post
         [BindProperty]
         public Models.Post Post { get; set; }
 
-        [BindProperty]
-        public string PostWriterHTML { get; set; }
-
         public CreateModel(BlogSiteContext db)
         {
             this.db = db;
@@ -38,7 +35,24 @@ namespace BlogSite.Pages.Post
 
         public async Task<IActionResult> OnPostAsync()
         {
-            return RedirectToPage();    
+            try
+            {
+                ClientService clientService = new ClientService(TempData);
+                PostService postService = new PostService(db);
+
+                var client = clientService.GetDeserializedClient();
+                this.Post.Author = client.UserId;
+
+                if (await postService.CreatePostAsync(this.Post, ModelState)) return RedirectToPage("../Index");
+            }
+            catch (Exception ex)
+            {
+                ViewData["ServerExceptionData"] = new ServerExceptionData(ex);
+            }
+
+            Themes = await db.Themes.Select(x => new SelectListItem(x.Name, x.ThemeId.ToString())).ToListAsync();
+
+            return Page();
         }
     }
 }

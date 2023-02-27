@@ -23,7 +23,7 @@
                     <select class="form-control" id="post-theme" asp-items="@Model.Themes" asp-for="@Model.Post.Theme"></select>
                     <span class="text-danger" asp-validation-for="@Model.Post.Theme"></span>
                  </div>
-                 <input type="text" id="post-writer-html" hidden  asp-for="@Model.PostWriterHTML"/>
+                 <input type="text" id="post-writer-html" hidden  asp-for="@Model.Post.Content"/>
                 <button class="btn btn-danger w-100" type="submit" id="btn-create">Create new post!</button>
             </form>
         </div>
