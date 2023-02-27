@@ -1,24 +1,23 @@
 ﻿@{
-    var ServerExceptionData = ViewData["ServerExceptionData"] as ServerExceptionData;
+    var ServerMessage = ViewData["ServerMessage"] as ServerMessage;
 
-    if(ServerExceptionData != null)
+    if(ServerMessage != null)
     {
         <div class="modal fade" id="serverExceptionModal" tabindex="-1" aria-labelledby="serverExceptionModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="serverExceptionModalLabel">Oops!</h1>
+                        <h1 class="modal-title fs-5" id="serverExceptionModalLabel">@ServerMessage.Title</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        @ServerExceptionData.ClientMessage
+                        @ServerMessage.Message
                     </div>
                 </div>
             </div>
         </div>
 
         <script type="text/javascript">
-            console.error("@ServerExceptionData.ConsoleMessage");
             $(document).ready(function () {
                 $('#serverExceptionModal').modal('show');
             });

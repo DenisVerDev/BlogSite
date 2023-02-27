@@ -47,7 +47,7 @@ namespace BlogSite.Pages.Post
             }
             catch (Exception ex)
             {
-                ViewData["ServerExceptionData"] = new ServerExceptionData(ex);
+                ViewData["ServerMessage"] = new ServerMessage();
             }
 
             Themes = await db.Themes.Select(x => new SelectListItem(x.Name, x.ThemeId.ToString())).ToListAsync();

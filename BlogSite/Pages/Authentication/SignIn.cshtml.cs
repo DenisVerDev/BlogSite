@@ -35,7 +35,7 @@ namespace BlogSite.Pages.Authentication
             catch(Exception ex)
             {
                 service.SaveClient(null);
-                ViewData["ServerExceptionData"] = new ServerExceptionData(ex);
+                ViewData["ServerMessage"] = new ServerMessage();
             }
 
             return Page();
