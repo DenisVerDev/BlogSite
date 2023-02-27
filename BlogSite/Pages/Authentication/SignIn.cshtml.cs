@@ -30,7 +30,7 @@ namespace BlogSite.Pages.Authentication
 
             try
             {
-                if(await service.SignInAsync(ModelState, db, Client)) return RedirectToPage("../Index");
+                if(await service.SignInAsync(Client, db, ModelState)) return RedirectToPage("../Index");
             }
             catch(Exception ex)
             {

@@ -2,18 +2,19 @@
 using BlogSite.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogSite.Services
 {
     public class ClientService
     {
-        private const string TempClientKey = "Client";
+        private const string TempKey = "Client";
 
         private ITempDataDictionary TempData;
 
         public bool IsAuthenticated
         {
-            get { return TempData.Peek(TempClientKey) != null; }
+            get { return TempData.Peek(TempKey) != null; }
         }
 
         public ClientService(ITempDataDictionary TempData)
@@ -25,7 +26,7 @@ namespace BlogSite.Services
         {
             try
             {
-                var userjson = TempData.Peek(TempClientKey);
+                var userjson = TempData.Peek(TempKey);
 
                 if (userjson != null) 
                     return JsonConvert.DeserializeObject<User>(userjson.ToString()!);
@@ -40,35 +41,37 @@ namespace BlogSite.Services
 
         public void SaveClient(User? client)
         {
-            TempData[TempClientKey] = client != null ? JsonConvert.SerializeObject(client) : null;
+            TempData[TempKey] = client != null ? JsonConvert.SerializeObject(client) : null;
         }
 
-        public async Task<bool> LogInAsync(ModelStateDictionary ModelState, BlogSiteContext db, User LoginUser)
+        public async Task<bool> LogInAsync(User LoginUser, BlogSiteContext db, ModelStateDictionary ModelState)
         {
-            var db_user = db.Users.Where(x => x.Email == LoginUser.Email).FirstOrDefault();
+            var db_user = await db.Users.Where(x => x.Email == LoginUser.Email).FirstOrDefaultAsync();
 
             if(db_user != null)
             {
-                if (db_user.Password.Equals(LoginUser.Password)) this.SaveClient(db_user);
-                else ModelState.AddModelError($"{TempClientKey}.Password", "Wrong password!");
+                if (db_user.Password.Equals(LoginUser.Password)) this.SaveClient(db_user); // save in TempData to remember the authentication
+                else ModelState.AddModelError($"{TempKey}.Password", "Wrong password!");
             }
-            else ModelState.AddModelError($"{TempClientKey}.Email", "There is no account with that email!");
+            else ModelState.AddModelError($"{TempKey}.Email", "There is no account with that email!");
 
-            ModelState.Remove($"{TempClientKey}.Username"); // username check is not necessary
+            ModelState.Remove($"{TempKey}.Username"); // username check is not necessary
 
             return ModelState.IsValid;
         }
 
-        public async Task<bool> SignInAsync(ModelStateDictionary ModelState, BlogSiteContext db, User SigninUser)
+        public async Task<bool> SignInAsync(User SigninUser, BlogSiteContext db, ModelStateDictionary ModelState)
         {
-            if (!db.Users.Where(x => x.Email == SigninUser.Email).Any())
+            bool userexisted = await db.Users.AnyAsync(x => x.Email == SigninUser.Email);
+            
+            if (!userexisted)
             {
                 db.Users.Add(SigninUser);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
                 this.SaveClient(SigninUser);
             }
-            else ModelState.AddModelError($"{TempClientKey}.Email", "This email address is already taken!");
+            else ModelState.AddModelError($"{TempKey}.Email", "This email address is already taken!");
 
             return ModelState.IsValid;
         }

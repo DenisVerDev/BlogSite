@@ -43,7 +43,7 @@ namespace BlogSite.Pages.Post
                 var client = clientService.GetDeserializedClient();
                 this.Post.Author = client.UserId;
 
-                if (await postService.CreatePostAsync(this.Post, ModelState)) return RedirectToPage("../Index");
+                if (await postService.CreatePostAsync(this.Post, ModelState)) return RedirectToPage("../Profile/MyBlog"); // to see all your posts in one place
             }
             catch (Exception ex)
             {
