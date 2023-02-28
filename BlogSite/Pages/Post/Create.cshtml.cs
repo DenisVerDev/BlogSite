@@ -26,7 +26,7 @@ namespace BlogSite.Pages.Post
             ClientService service = new ClientService(TempData);
             if(service.IsAuthenticated)
             {
-                Themes = await db.Themes.Select(x=> new SelectListItem(x.Name, x.ThemeId.ToString())).ToListAsync();
+                Themes = await this.GetThemes();
                 return Page();
             }
 
@@ -50,9 +50,17 @@ namespace BlogSite.Pages.Post
                 ViewData["ServerMessage"] = new ServerMessage();
             }
 
-            Themes = await db.Themes.Select(x => new SelectListItem(x.Name, x.ThemeId.ToString())).ToListAsync();
+            Themes = await this.GetThemes();
 
             return Page();
+        }
+
+        private async Task<List<SelectListItem>> GetThemes()
+        {
+            ThemesService themesService = new ThemesService(db);
+            await themesService.LoadThemesAsync();
+
+            return themesService.GetFormThemes();
         }
     }
 }
