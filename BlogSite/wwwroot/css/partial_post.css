@@ -1,0 +1,14 @@
+﻿.non-theme {
+    height: 20vh;
+    background-color: gray;
+    text-align: center;
+    vertical-align: central;
+    line-height: 20vh;
+}
+
+.likes {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
