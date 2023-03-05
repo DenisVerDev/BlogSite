@@ -1,0 +1,35 @@
+﻿@using BlogSite.Models.FilterModels
+@model PostsFilterModel
+@{
+    List<SelectListItem> items = new List<SelectListItem>();
+
+    var values = Enum.GetValues(typeof(DatePeriod));
+    for (int i = 0; i < values.Length; i++)
+    {
+        var value = values.GetValue(i).ToString();
+
+        items.Add(new SelectListItem(value.Replace('_', ' '), value));
+    }
+}
+
+<form method="post">
+    <div class="row bg-secondary text-light border rounded-3">
+        <div class="col-sm-12 col-md-4 ps-md-4">
+            <label class="col-form-label h6">Filters:</label>
+        </div>
+        <div class="col-sm-12 col-md-3 pt-1">
+            <label class="form-label me-2" asp-for="@Model.DatePeriod"></label>
+            <select class="form-control-sm" style="display:inline-block; width:150px;" asp-items="@items" asp-for="@Model.DatePeriod"></select>
+        </div>
+        <div class="col-sm-12 col-md-2 pt-2 pb-2">
+            <input class="form-check-input" type="checkbox" value="" id="most-popular" asp-for="@Model.MostPopular">
+            <label class="form-check-label" asp-for="@Model.MostPopular"></label>
+        </div>
+        <div class="col-sm-12 col-md-2 pt-2 pb-2">
+            <input class="form-check-input" type="checkbox" value="" id="only-favorites" asp-for="@Model.OnlyFavorites">
+            <label class="form-check-label" asp-for="@Model.OnlyFavorites"></label>
+        </div>
+        <input id="page-num" hidden asp-for="@Model.Page"/>
+        <button class="col-sm-12 col-md-1 btn btn-secondary active" type="submit">Apply</button>
+    </div>
+</form>

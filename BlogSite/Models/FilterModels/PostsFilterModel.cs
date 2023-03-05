@@ -1,4 +1,6 @@
-﻿namespace BlogSite.Models.FilterModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BlogSite.Models.FilterModels
 {
     /// <summary>
     /// ONLY_NEWEST - shows recently created post(sorst by CreationDate) in right chronological order;
@@ -12,10 +14,13 @@
 
     public class PostsFilterModel
     {
+        [Display(Name = "Date period")]
         public DatePeriod DatePeriod { get; set; }
 
+        [Display(Name = "Only favorites")]
         public bool OnlyFavorites { get; set; }
 
+        [Display(Name = "Most popular")]
         public bool MostPopular { get; set; }
 
         public int Page { get; set; }
