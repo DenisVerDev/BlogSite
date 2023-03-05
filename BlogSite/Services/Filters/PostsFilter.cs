@@ -21,6 +21,14 @@ namespace BlogSite.Services.Filters
             this.ElementsPerPage = 9;
         }
 
+        public PostsFilter(PostsFilterModel postsFilterModel)
+        {
+            this.FilterData = postsFilterModel;
+            this.FilteredData = new List<PartialPost>();
+
+            this.ElementsPerPage = 9;
+        }
+
         public IQueryable<Post> FilterByDatePeriod(IQueryable<Post> actualModel)
         {
             if(FilterData.DatePeriod == DatePeriod.ONLY_NEWEST) actualModel = actualModel.OrderByDescending(x => x.CreationDate);
@@ -46,11 +54,9 @@ namespace BlogSite.Services.Filters
 
         public IQueryable<Post> FilterByPage(IQueryable<Post> actualModel)
         {
-            if (FilterData.Page > 0) actualModel = actualModel.Skip(FilterData.Page * ElementsPerPage);
+            int page_index = FilterData.Page - 1;
 
-            actualModel = actualModel.Take(ElementsPerPage);
-
-            return actualModel;
+            return actualModel.Skip(page_index * ElementsPerPage).Take(ElementsPerPage);
         }
 
         public async Task LoadFilteredDataAsync(IQueryable<Post> actualModel)

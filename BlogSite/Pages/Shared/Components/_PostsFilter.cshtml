@@ -22,11 +22,11 @@
             <select class="form-control-sm" style="display:inline-block; width:150px;" asp-items="@items" asp-for="@Model.DatePeriod"></select>
         </div>
         <div class="col-sm-12 col-md-2 pt-2 pb-2">
-            <input class="form-check-input" type="checkbox" value="" id="most-popular" asp-for="@Model.MostPopular">
+            <input class="form-check-input" type="checkbox" id="most-popular" asp-for="@Model.MostPopular">
             <label class="form-check-label" asp-for="@Model.MostPopular"></label>
         </div>
         <div class="col-sm-12 col-md-2 pt-2 pb-2">
-            <input class="form-check-input" type="checkbox" value="" id="only-favorites" asp-for="@Model.OnlyFavorites">
+            <input class="form-check-input" type="checkbox" id="only-favorites" asp-for="@Model.OnlyFavorites">
             <label class="form-check-label" asp-for="@Model.OnlyFavorites"></label>
         </div>
         <input id="page-num" hidden asp-for="@Model.Page"/>
