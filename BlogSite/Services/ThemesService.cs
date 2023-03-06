@@ -1,4 +1,5 @@
 ﻿using BlogSite.Models;
+using BlogSite.Models.PartialModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,42 +9,59 @@ namespace BlogSite.Services
     {
         private readonly BlogSiteContext db;
 
-        private List<Theme> Themes { get; set; }
+        public ThemesService()
+        {
+
+        }
 
         public ThemesService(BlogSiteContext db)
         {
             this.db = db;
-            this.Themes = new List<Theme>();
         }
 
-        public async Task LoadThemesAsync()
+        public async Task<List<PartialTheme>> LoadThemesAsync()
         {
-            Themes = await db.Themes.ToListAsync();
-        }
+            var themes = await db.Themes.ToListAsync();
 
-        public List<SelectListItem> GetFormThemes()
-        {
-            return Themes.Select(x => new SelectListItem(x.Name, x.ThemeId.ToString())).ToList();
-        }
-
-        public string GetImageSrc(int theme_id)
-        {
-            var theme = Themes.Find(x => x.ThemeId == theme_id);
-            if(theme != null)
+            var partial_themes = themes.Select(x => new PartialTheme()
             {
-                var base64 = Convert.ToBase64String(theme.ThemeImage);
-                return $"data:image/png;base64,{base64}";
-            }
+                ThemeId = x.ThemeId,
+                ThemeName = x.Name,
+                ThemeImage = this.GetImageSrc(x.ThemeImage)
+            }).ToList();
 
-            return String.Empty;
+            return partial_themes;
         }
 
-        public string GetThemeName(int theme_id)
+        public async Task<List<SelectListItem>> GetFormThemesAsync()
         {
-            var theme = Themes.Find(x => x.ThemeId == theme_id);
-            if (theme != null) return theme.Name;
+            var themes = await this.LoadThemesAsync();
+            return themes.Select(x => new SelectListItem(x.ThemeName, x.ThemeId.ToString())).ToList();
+        }
 
-            return String.Empty;
+        public List<SelectListItem> GetFormThemes(IEnumerable<PartialTheme> themes)
+        {
+            return themes.Select(x => new SelectListItem(x.ThemeName, x.ThemeId.ToString())).ToList();
+        }
+
+        public PartialTheme? ConvertToPartial(Theme? theme)
+        {
+            if (theme == null) return null;
+
+            PartialTheme partialTheme = new PartialTheme() 
+            {
+                ThemeId = theme.ThemeId,
+                ThemeName = theme.Name,
+                ThemeImage = this.GetImageSrc(theme.ThemeImage)
+            };
+
+            return partialTheme;
+        }
+
+        private string GetImageSrc(byte[] theme_image)
+        {
+            var base64 = Convert.ToBase64String(theme_image);
+            return $"data:image/png;base64,{base64}";
         }
     }
 }

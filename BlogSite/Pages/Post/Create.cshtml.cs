@@ -58,9 +58,8 @@ namespace BlogSite.Pages.Post
         private async Task<List<SelectListItem>> GetThemes()
         {
             ThemesService themesService = new ThemesService(db);
-            await themesService.LoadThemesAsync();
 
-            return themesService.GetFormThemes();
+            return await themesService.GetFormThemesAsync();
         }
     }
 }

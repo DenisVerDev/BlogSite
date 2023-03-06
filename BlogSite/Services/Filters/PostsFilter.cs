@@ -61,11 +61,13 @@ namespace BlogSite.Services.Filters
 
         public async Task LoadFilteredDataAsync(IQueryable<Post> actualModel)
         {
+            ThemesService themesService = new ThemesService();
+
             this.FilteredData = await actualModel.Select(x => new PartialPost()
             {
                 PostId = x.PostId,
                 Author = x.AuthorNavigation,
-                ThemeId = x.Theme,
+                Theme = themesService.ConvertToPartial(x.ThemeNavigation),
                 Title = x.Title,
                 Likes = x.Likers.LongCount(),
                 LastUpdateDate = x.LastUpdateDate

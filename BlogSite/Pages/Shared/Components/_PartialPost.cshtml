@@ -1,26 +1,23 @@
 ﻿@using BlogSite.Models.PartialModels
-@{
-    var themesService = ViewData["ThemesService"] as ThemesService;
-    var post = ViewData["CurrentPost"] as PartialPost;
-}
+@model PartialPost
 
 <div class="card">
-    @if (post.ThemeId.HasValue) {<div style="height:20vh; background-image:url(@themesService.GetImageSrc(post.ThemeId.Value));"></div>}
+    @if (Model.Theme != null) {<div style="height:20vh; background-image:url(@Model.Theme.ThemeImage);"></div>}
     else {<div class="text-light non-theme">Theme image</div>}
     <div class="card-body">
-        <a class="h4 card-title" href="#">@post.Title</a>
+        <a class="h4 card-title" href="#">@Model.Title</a>
         <div>
             <h6 class="card-subtitle text-muted mt-2 mb-1" style="display:inline-block;">Author: </h6>
-            <a class="h6 card-subtitle text-muted mt-2 mb-1" href="#">@post.Author.Username</a>
+            <a class="h6 card-subtitle text-muted mt-2 mb-1" href="#">@Model.Author.Username</a>
         </div>
         <div>
             <h6 class="card-subtitle text-muted mb-2" style="display:inline-block;">Theme: </h6>
-            @if (post.ThemeId.HasValue){<a class="h6 card-subtitle text-muted mb-2" href="#">@themesService.GetThemeName(post.ThemeId.Value)</a>}
+            @if (Model.Theme != null){<a class="h6 card-subtitle text-muted mb-2" href="#">@Model.Theme.ThemeName</a>}
             else{<h6 class="card-subtitle text-muted mb-2" style="display:inline-block;">None</h6>}
         </div>
         <div class="d-flex justify-content-between mt-2">
-            <div class="h6 card-text likes">Likes: @post.Likes</div>
-            <div class="h6 card-text text-muted">Last updated: @post.LastUpdateDate.ToShortDateString()</div>
+            <div class="h6 card-text likes">Likes: @Model.Likes</div>
+            <div class="h6 card-text text-muted">Last updated: @Model.LastUpdateDate.ToShortDateString()</div>
         </div>
     </div>
 </div>
