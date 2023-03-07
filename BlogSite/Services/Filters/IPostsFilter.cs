@@ -6,6 +6,8 @@ namespace BlogSite.Services.Filters
 {
     public interface IPostsFilter : IFilter<Post, PartialPost, PostsFilterModel>
     {
+        public IQueryable<Post> FilterByTheme(IQueryable<Post> actualModel);
+
         public IQueryable<Post> FilterByDatePeriod(IQueryable<Post> actualModel);
 
         public IQueryable<Post> FilterByFavorites(IQueryable<Post> actualModel);

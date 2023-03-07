@@ -29,6 +29,13 @@ namespace BlogSite.Services.Filters
             this.ElementsPerPage = 9;
         }
 
+        public IQueryable<Post> FilterByTheme(IQueryable<Post> actualModel)
+        {
+            if (FilterData.ThemeId > 0) actualModel = actualModel.Where(x => x.Theme == FilterData.ThemeId);
+
+            return actualModel;
+        }
+
         public IQueryable<Post> FilterByDatePeriod(IQueryable<Post> actualModel)
         {
             if(FilterData.DatePeriod == DatePeriod.ONLY_NEWEST) actualModel = actualModel.OrderByDescending(x => x.CreationDate);
@@ -76,6 +83,7 @@ namespace BlogSite.Services.Filters
 
         public async Task FilterAsync(IQueryable<Post> actualModel)
         {
+            actualModel = this.FilterByTheme(actualModel);
             actualModel = this.FilterByDatePeriod(actualModel);
             actualModel = this.FilterByFavorites(actualModel);
             actualModel = this.FilterByPopularity(actualModel);

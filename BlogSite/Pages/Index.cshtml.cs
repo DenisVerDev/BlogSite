@@ -3,8 +3,10 @@ using BlogSite.Models.FilterModels;
 using BlogSite.Models.PartialModels;
 using BlogSite.Services;
 using BlogSite.Services.Filters;
+using BlogSite.Services.Filters.Partial;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BlogSite.Pages
 {
@@ -51,9 +53,29 @@ namespace BlogSite.Pages
             {
                 this.Posts = new List<PartialPost>();
                 ViewData["ServerMessage"] = new ServerMessage();
-            }
+            };
+
+            await this.ConfigureFilterAsync();
 
             return Page();
+        }
+
+        private async Task ConfigureFilterAsync()
+        {
+            PartialPostsFilter ppf = new PartialPostsFilter(db);
+
+            try
+            {
+                ViewData["FilterThemes"] = await ppf.GetThemesAsync();
+                ViewData["FilterDatePeriods"] = ppf.GetDatePeriods();
+            }
+            catch(Exception ex)
+            {
+                ViewData["FilterThemes"] = ppf.GetBaseThemes();
+                ViewData["FilterDatePeriods"] = ppf.GetBaseDatePeriods();
+
+                ViewData["ServerMessage"] = new ServerMessage();
+            }
         }
     }
 }

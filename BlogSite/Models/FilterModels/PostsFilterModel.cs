@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BlogSite.Models.PartialModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlogSite.Models.FilterModels
 {
@@ -14,6 +15,9 @@ namespace BlogSite.Models.FilterModels
 
     public class PostsFilterModel
     {
+        [Display(Name = "Theme")]
+        public int ThemeId { get; set; }
+
         [Display(Name = "Date period")]
         public DatePeriod DatePeriod { get; set; }
 
@@ -29,11 +33,12 @@ namespace BlogSite.Models.FilterModels
 
         public PostsFilterModel()
         {
+            this.ThemeId = 0;
             this.DatePeriod = DatePeriod.ALL_TIME;
             this.OnlyFavorites = false;
             this.MostPopular = false;
             this.Page = 1;
-
+            
             this.Client = null;
         }
     }
