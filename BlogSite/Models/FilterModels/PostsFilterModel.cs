@@ -29,7 +29,7 @@ namespace BlogSite.Models.FilterModels
 
         public PostsFilterModel()
         {
-            this.DatePeriod = DatePeriod.ONLY_NEWEST;
+            this.DatePeriod = DatePeriod.ALL_TIME;
             this.OnlyFavorites = false;
             this.MostPopular = false;
             this.Page = 1;

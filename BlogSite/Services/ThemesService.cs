@@ -44,10 +44,8 @@ namespace BlogSite.Services
             return themes.Select(x => new SelectListItem(x.ThemeName, x.ThemeId.ToString())).ToList();
         }
 
-        public PartialTheme? ConvertToPartial(Theme? theme)
+        public PartialTheme ConvertToPartial(Theme theme)
         {
-            if (theme == null) return null;
-
             PartialTheme partialTheme = new PartialTheme() 
             {
                 ThemeId = theme.ThemeId,

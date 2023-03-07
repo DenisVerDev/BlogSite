@@ -21,7 +21,7 @@ public partial class Post
 
     [Required(ErrorMessage = "The theme field is required!")]
     [Display(Name = "Post's theme")]
-    public int? Theme { get; set; }
+    public int Theme { get; set; }
 
     [Display(Name = "Created: ")]
     public DateTime CreationDate { get; set; } = DateTime.Now;
@@ -31,7 +31,7 @@ public partial class Post
 
     public virtual User AuthorNavigation { get; set; } = null!;
 
-    public virtual Theme? ThemeNavigation { get; set; }
+    public virtual Theme ThemeNavigation { get; set; }
 
     public virtual ICollection<User> Likers { get; } = new List<User>();
 }

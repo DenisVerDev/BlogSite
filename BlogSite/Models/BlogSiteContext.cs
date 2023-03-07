@@ -44,7 +44,7 @@ public partial class BlogSiteContext : DbContext
 
             entity.HasOne(d => d.ThemeNavigation).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.Theme)
-                .OnDelete(DeleteBehavior.SetNull)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_PostTheme");
         });
 
