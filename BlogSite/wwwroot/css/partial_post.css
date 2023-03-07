@@ -12,3 +12,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.card-subtitle{
+    display:inline-block;
+}

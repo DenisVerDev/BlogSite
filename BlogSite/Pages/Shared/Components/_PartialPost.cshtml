@@ -1,23 +1,24 @@
 ﻿@using BlogSite.Models.PartialModels
 @model PartialPost
 
-<div class="card">
-    @if (Model.Theme != null) {<div style="height:20vh; background-image:url(@Model.Theme.ThemeImage);"></div>}
-    else {<div class="text-light non-theme">Theme image</div>}
+<div class="card h-100">
+    <div style="height:20vh; background-image:url(@Model.Theme.ThemeImage);"></div>
     <div class="card-body">
         <a class="h4 card-title" href="#">@Model.Title</a>
-        <div>
-            <h6 class="card-subtitle text-muted mt-2 mb-1" style="display:inline-block;">Author: </h6>
-            <a class="h6 card-subtitle text-muted mt-2 mb-1" href="#">@Model.Author.Username</a>
+        <div class="mt-2 mb-1">
+            <h6 class="card-subtitle text-muted">Author: </h6>
+            <a class="h6 card-subtitle text-muted" href="#">@Model.Author.Username</a>
         </div>
-        <div>
-            <h6 class="card-subtitle text-muted mb-2" style="display:inline-block;">Theme: </h6>
-            @if (Model.Theme != null){<a class="h6 card-subtitle text-muted mb-2" href="#">@Model.Theme.ThemeName</a>}
-            else{<h6 class="card-subtitle text-muted mb-2" style="display:inline-block;">None</h6>}
+        <div class="mb-1">
+            <h6 class="card-subtitle text-muted">Theme: </h6>
+            <h6 class="card-subtitle text-muted">
+                @if (Model.Theme != null) { <text>@Model.Theme.ThemeName</text>}
+                else {<text>None</text>}
+            </h6>
         </div>
-        <div class="d-flex justify-content-between mt-2">
-            <div class="h6 card-text likes">Likes: @Model.Likes</div>
-            <div class="h6 card-text text-muted">Last updated: @Model.LastUpdateDate.ToShortDateString()</div>
-        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+        <div class="h6 card-text likes">Likes: @Model.Likes</div>
+        <div class="h6 card-text text-muted">Last updated: @Model.LastUpdateDate.ToShortDateString()</div>
     </div>
 </div>
