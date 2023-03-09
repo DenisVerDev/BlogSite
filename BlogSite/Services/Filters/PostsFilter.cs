@@ -7,26 +7,16 @@ namespace BlogSite.Services.Filters
 {
     public class PostsFilter : IPostsFilter
     {
-        public PostsFilterModel FilterData { get; set; }
-
-        public List<PartialPost> FilteredData { get; set; }
+        public PostsFilterModel FilterData { get; init; }
 
         public int ElementsPerPage { get; init; }
 
-        public PostsFilter()
-        {
-            this.FilterData = new PostsFilterModel();
-            this.FilteredData = new List<PartialPost>();
+        public int TotalPages { get; private set; }
 
-            this.ElementsPerPage = 9;
-        }
-
-        public PostsFilter(PostsFilterModel postsFilterModel)
+        public PostsFilter(PostsFilterModel postsFilterModel, int ElementsPerPage)
         {
             this.FilterData = postsFilterModel;
-            this.FilteredData = new List<PartialPost>();
-
-            this.ElementsPerPage = 9;
+            this.ElementsPerPage = ElementsPerPage;
         }
 
         public IQueryable<Post> FilterByTheme(IQueryable<Post> actualModel)
@@ -66,11 +56,19 @@ namespace BlogSite.Services.Filters
             return actualModel.Skip(page_index * ElementsPerPage).Take(ElementsPerPage);
         }
 
-        public async Task LoadFilteredDataAsync(IQueryable<Post> actualModel)
+        public async Task<int> GetTotalPagesAsync(IQueryable<Post> actualModel)
+        {
+            int count = await actualModel.CountAsync();
+            double total_pages = (double)count / ElementsPerPage;
+
+            return (int)Math.Ceiling(total_pages);
+        }
+
+        public async Task<List<PartialPost>> SelectFilteredDataAsync(IQueryable<Post> actualModel)
         {
             ThemesService themesService = new ThemesService();
 
-            this.FilteredData = await actualModel.Select(x => new PartialPost()
+            var filtered = await actualModel.Select(x => new PartialPost()
             {
                 PostId = x.PostId,
                 Author = x.AuthorNavigation,
@@ -79,17 +77,24 @@ namespace BlogSite.Services.Filters
                 Likes = x.Likers.LongCount(),
                 LastUpdateDate = x.LastUpdateDate
             }).ToListAsync();
+
+            return filtered;
         }
 
-        public async Task FilterAsync(IQueryable<Post> actualModel)
+        public async Task<List<PartialPost>> FilterAsync(IQueryable<Post> actualModel)
         {
             actualModel = this.FilterByTheme(actualModel);
             actualModel = this.FilterByDatePeriod(actualModel);
             actualModel = this.FilterByFavorites(actualModel);
             actualModel = this.FilterByPopularity(actualModel);
+            
+            this.TotalPages = await this.GetTotalPagesAsync(actualModel);
+
             actualModel = this.FilterByPage(actualModel);
 
-            await this.LoadFilteredDataAsync(actualModel);
+            var filtered = await this.SelectFilteredDataAsync(actualModel);
+
+            return filtered;
         }
     }
 }

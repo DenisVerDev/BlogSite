@@ -14,7 +14,11 @@ namespace BlogSite.Pages
     {
         private readonly BlogSiteContext db;
 
+        private const int ElementsPerPage = 9;
+
         public List<PartialPost> Posts { get; private set; }
+
+        public PartialPagination Pagination { get; private set; }
 
         [BindProperty]
         public PostsFilterModel FilterModel { get; set; }
@@ -44,14 +48,16 @@ namespace BlogSite.Pages
                 if (FilterModel == null) FilterModel = new PostsFilterModel() { Client = client };
                 else FilterModel.Client = client;
 
-                PostsFilter filter = new PostsFilter(FilterModel);
-                await filter.FilterAsync(this.db.Posts);
+                PostsFilter filter = new PostsFilter(FilterModel, ElementsPerPage);
+                this.Posts = await filter.FilterAsync(this.db.Posts);
 
-                this.Posts = filter.FilteredData;
+                this.Pagination = new PartialPagination(filter.TotalPages, FilterModel.Page);
             }
             catch (Exception ex)
             {
                 this.Posts = new List<PartialPost>();
+                this.Pagination = new PartialPagination();
+
                 ViewData["ServerMessage"] = new ServerMessage();
             };
 
