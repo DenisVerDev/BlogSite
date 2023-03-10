@@ -2,33 +2,47 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
-
+    
     int index = 0;
 }
 
 @section Css{
+    <link rel="stylesheet" href="~/css/posts_filter.css" />
     <link rel="stylesheet" href="~/css/partial_post.css"/>
 }
 
 <div class="container mt-5">
     <partial name="Components/_PostsFilter" model="@Model.FilterModel" />
-    @for (int i = 0; i < 3; i++)
+    @if (Model.Posts.Count > 0)
     {
-        <div class="row">
-            @for(int j = 0; j < 3; j++, index++)
-            {
-                <div class="col-sm-12 col-md-4 mt-5">
-                    @if (index < Model.Posts.Count)
-                    {
-                        <partial name="Components/_PartialPost" model="@Model.Posts[index]"/>
-                    }
-                </div>
-            }
+        @for (int i = 0; i < 3; i++)
+        {
+            <div class="row">
+                @for (int j = 0; j < 3; j++, index++)
+                {
+                    <div class="col-sm-12 col-md-4 mt-5">
+                        @if (index < Model.Posts.Count)
+                        {
+                            <partial name="Components/_PartialPost" model="@Model.Posts[index]"/>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+    }
+    else
+    {
+        <div class="row mt-5 justify-content-center">
+            <div class="col-md-2">
+                <h1 class="text-muted">No results</h1>
+            </div>
         </div>
     }
     <partial name="Components/_Pagination" model="@Model.Pagination"/>
 </div>
 
 @section Scripts{
+    <script src="~/js/posts_filter.js"></script>
     <script src="~/js/pagination.js"></script>
 }
