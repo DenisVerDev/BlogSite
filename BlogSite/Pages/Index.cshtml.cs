@@ -6,15 +6,14 @@ using BlogSite.Services.Filters;
 using BlogSite.Services.Filters.Partial;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BlogSite.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly BlogSiteContext db;
-
         private const int ElementsPerPage = 9;
+
+        private readonly BlogSiteContext db;
 
         public List<PartialPost> Posts { get; private set; }
 
@@ -42,16 +41,8 @@ namespace BlogSite.Pages
         {
             try
             {
-                ClientService clientService = new ClientService(TempData);
-                var client = clientService.GetDeserializedClient();
-
-                if (FilterModel == null) FilterModel = new PostsFilterModel() { Client = client };
-                else FilterModel.Client = client;
-
-                PostsFilter filter = new PostsFilter(FilterModel, ElementsPerPage);
-                this.Posts = await filter.FilterAsync(this.db.Posts);
-
-                this.Pagination = new PartialPagination(filter.TotalPages, FilterModel.Page);
+                this.InitFilterModel();
+                await this.FilterAsync();
             }
             catch (Exception ex)
             {
@@ -64,6 +55,28 @@ namespace BlogSite.Pages
             await this.ConfigureFilterAsync();
 
             return Page();
+        }
+
+        private void InitFilterModel()
+        {
+            ClientService clientService = new ClientService(TempData);
+            var client = clientService.GetDeserializedClient();
+
+            if (FilterModel == null) FilterModel = new PostsFilterModel() { Client = client };
+            else FilterModel.Client = client;
+        }
+
+        private async Task FilterAsync()
+        {
+            PostsFilter filter = new PostsFilter(this.db.Posts, FilterModel, ElementsPerPage);
+            filter.BuildStandartFilter();
+
+            int total_pages = await filter.GetTotalPagesAsync();
+
+            filter.UsePagination();
+
+            this.Posts = await filter.FilterAsync();
+            this.Pagination = new PartialPagination(total_pages, FilterModel.Page);
         }
 
         private async Task ConfigureFilterAsync()
