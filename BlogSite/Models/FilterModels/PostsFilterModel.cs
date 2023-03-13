@@ -1,37 +1,26 @@
 ﻿using BlogSite.Models.PartialModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlogSite.Models.FilterModels
 {
-    /// <summary>
-    /// ONLY_NEWEST - shows recently created post(sorst by CreationDate) in right chronological order;
-    /// ALL_TIME - shows every post(sorts by LastUpdateDate);
-    /// </summary>
-    public enum DatePeriod
-    {
-        ONLY_NEWEST,
-        ALL_TIME
-    }
 
     public class PostsFilterModel
     {
-        [Display(Name = "Theme")]
-        public int ThemeId { get; set; }
+        [BindProperty]
+        public PostsFilterData FilterData { get; set; }
 
-        [Display(Name = "Date period")]
-        public DatePeriod DatePeriod { get; set; }
+        public List<SelectListItem> Themes { get; set; }
 
-        [Display(Name = "Most popular")]
-        public bool MostPopular { get; set; }
-
-        public int Page { get; set; }
+        public List<SelectListItem> DatePeriods { get; set; }
 
         public PostsFilterModel()
         {
-            this.ThemeId = 0;
-            this.DatePeriod = DatePeriod.ALL_TIME;
-            this.MostPopular = false;
-            this.Page = 1;
+            this.FilterData = new PostsFilterData();
+
+            this.Themes = new List<SelectListItem>() { new SelectListItem("All", FilterData.ThemeId.ToString()) };
+            this.DatePeriods = new List<SelectListItem>() { new SelectListItem("All time", DatePeriod.ALL_TIME.ToString())};
         }
     }
 

@@ -3,7 +3,7 @@ using BlogSite.Models.FilterModels;
 using BlogSite.Models.PartialModels;
 using BlogSite.Services;
 using BlogSite.Services.Filters;
-using BlogSite.Services.Filters.Partial;
+using BlogSite.Services.Filters.Configurators;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -15,16 +15,18 @@ namespace BlogSite.Pages
 
         private readonly BlogSiteContext db;
 
+        [BindProperty]
+        public PostsFilterModel FilterModel { get; set; }
+
         public List<PartialPost> Posts { get; private set; }
 
         public PartialPagination Pagination { get; private set; }
 
-        [BindProperty]
-        public PostsFilterModel FilterModel { get; set; }
-
         public IndexModel(BlogSiteContext db)
         {
             this.db = db;
+
+            this.FilterModel = new PostsFilterModel(); // so, FilterData can be entered when POST
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -41,8 +43,8 @@ namespace BlogSite.Pages
         {
             try
             {
-                this.InitFilterModel();
                 await this.FilterAsync();
+                await this.ConfigureFilterAsync();
             }
             catch (Exception ex)
             {
@@ -52,22 +54,12 @@ namespace BlogSite.Pages
                 ViewData["ServerMessage"] = new ServerMessage();
             };
 
-            await this.ConfigureFilterAsync();
-
             return Page();
-        }
-
-        private void InitFilterModel()
-        {
-            ClientService clientService = new ClientService(TempData);
-            var client = clientService.GetDeserializedClient();
-
-            if (FilterModel == null) FilterModel = new PostsFilterModel();
         }
 
         private async Task FilterAsync()
         {
-            PostsFilter filter = new PostsFilter(this.db.Posts, FilterModel, ElementsPerPage);
+            PostsFilter filter = new PostsFilter(this.db.Posts, FilterModel.FilterData, ElementsPerPage);
             filter.BuildStandartFilter();
 
             int total_pages = await filter.GetTotalPagesAsync();
@@ -75,25 +67,18 @@ namespace BlogSite.Pages
             filter.UsePagination();
 
             this.Posts = await filter.FilterAsync();
-            this.Pagination = new PartialPagination(total_pages, FilterModel.Page);
+            this.Pagination = new PartialPagination(total_pages, FilterModel.FilterData.Page);
         }
 
         private async Task ConfigureFilterAsync()
         {
-            PartialPostsFilter ppf = new PartialPostsFilter(db);
+            PostsFilterConfigurator pfc = new PostsFilterConfigurator(db);
 
-            try
-            {
-                ViewData["FilterThemes"] = await ppf.GetThemesAsync();
-                ViewData["FilterDatePeriods"] = ppf.GetDatePeriods();
-            }
-            catch(Exception ex)
-            {
-                ViewData["FilterThemes"] = ppf.GetBaseThemes();
-                ViewData["FilterDatePeriods"] = ppf.GetBaseDatePeriods();
+            var themes = await pfc.GetThemesAsync();
+            var periods = pfc.GetDatePeriods();
 
-                ViewData["ServerMessage"] = new ServerMessage();
-            }
+            FilterModel.Themes.AddRange(themes);
+            FilterModel.DatePeriods = periods;
         }
     }
 }

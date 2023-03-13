@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogSite.Services.Filters
 {
-    public class PostsFilter : Filter<Post, PartialPost, PostsFilterModel>
+    public class PostsFilter : Filter<Post, PartialPost, PostsFilterData>
     {
 
-        public PostsFilter(IQueryable<Post> model, PostsFilterModel filter_model, int elements_per_page) :
-            base(model,filter_model,elements_per_page)
+        public PostsFilter(IQueryable<Post> model, PostsFilterData filter_data, int elements_per_page) :
+            base(model, filter_data, elements_per_page)
         {
             
         }

@@ -8,10 +8,10 @@
 
         public int ElementsPerPage { get; init; }
 
-        public Filter(IQueryable<ActualModel> model, FilterModel filter_model, int elements_per_page)
+        public Filter(IQueryable<ActualModel> model, FilterModel filter_data, int elements_per_page)
         {
             this.Query = model;
-            this.FilterData = filter_model;
+            this.FilterData = filter_data;
             this.ElementsPerPage = elements_per_page;
         }
 
