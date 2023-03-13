@@ -72,6 +72,7 @@ namespace BlogSite.Services.Filters
                 Theme = themesService.ConvertToPartial(x.ThemeNavigation),
                 Title = x.Title,
                 Likes = x.Likers.LongCount(),
+                CreationDate = x.CreationDate,
                 LastUpdateDate = x.LastUpdateDate
             }).ToListAsync();
 

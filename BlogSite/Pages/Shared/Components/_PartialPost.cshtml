@@ -16,6 +16,10 @@
                 else {<text>None</text>}
             </h6>
         </div>
+        <div class="mb-1">
+            <h6 class="card-subtitle text-muted">Created: </h6>
+            <h6 class="card-subtitle text-muted">@Model.CreationDate.ToShortDateString()</h6>
+        </div>
     </div>
     <div class="card-footer d-flex justify-content-between">
         <div class="h6 card-text likes">Likes: @Model.Likes</div>
