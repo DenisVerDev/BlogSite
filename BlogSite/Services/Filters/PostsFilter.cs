@@ -18,7 +18,6 @@ namespace BlogSite.Services.Filters
         {
             this.FilterByTheme();
             this.FilterByDatePeriod();
-            this.FilterByFavorites();
             this.FilterByPopularity();
         }
 
@@ -33,15 +32,16 @@ namespace BlogSite.Services.Filters
             else Query = Query.OrderByDescending(x => x.LastUpdateDate);
         }
 
-        public void FilterByFavorites()
-        {
-            if (FilterData.OnlyFavorites && FilterData.Client != null)
-                Query = Query.Where(x => x.AuthorNavigation.Followers.Any(c => c.UserId == FilterData.Client.UserId));
-        }
-
         public void FilterByPopularity()
         {
             if (FilterData.MostPopular) Query = Query.OrderByDescending(x => x.Likers.LongCount());
+        }
+
+        // to rework and test later
+        public void FilterByFavorites(User client)
+        {
+            if (client != null)
+                Query = Query.Where(x => x.AuthorNavigation.Followers.Any(c => c.UserId == client.UserId));
         }
 
         public override void UsePagination()
@@ -56,7 +56,9 @@ namespace BlogSite.Services.Filters
             int count = await Query.CountAsync();
             double total_pages = (double)count / ElementsPerPage;
 
-            return (int)Math.Ceiling(total_pages);
+            int result = (int)Math.Ceiling(total_pages);
+
+            return result == 0 ? 1 : result;
         }
 
         public override async Task<List<PartialPost>> FilterAsync()

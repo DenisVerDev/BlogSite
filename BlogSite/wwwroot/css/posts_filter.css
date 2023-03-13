@@ -1,4 +1,8 @@
-﻿.form-control-sm {
+﻿.filter-label {
+    width: 84px;
+}
+
+.filter-control-sm {
     display: inline-block;
     width: 150px;
 }

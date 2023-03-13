@@ -62,8 +62,7 @@ namespace BlogSite.Pages
             ClientService clientService = new ClientService(TempData);
             var client = clientService.GetDeserializedClient();
 
-            if (FilterModel == null) FilterModel = new PostsFilterModel() { Client = client };
-            else FilterModel.Client = client;
+            if (FilterModel == null) FilterModel = new PostsFilterModel();
         }
 
         private async Task FilterAsync()
@@ -72,7 +71,6 @@ namespace BlogSite.Pages
             filter.BuildStandartFilter();
 
             int total_pages = await filter.GetTotalPagesAsync();
-            if (total_pages == 0) total_pages++;
 
             filter.UsePagination();
 

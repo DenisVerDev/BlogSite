@@ -7,25 +7,20 @@
 
 <form id="filter-form" method="post">
     <div class="row bg-secondary text-light border rounded-3">
-        <div class="col-sm-12 col-md-2 ps-md-4">
+        <div class="col-sm-12 col-md-4 ps-md-4">
             <label class="col-form-label h6">Filters:</label>
         </div>
         <div class="col-sm-12 col-md-3 pt-1">
-            <label class="form-label me-2 ps-md-5" asp-for="@Model.ThemeId"></label>
-            <select id="filter-themes" class="form-control-sm" asp-items="@themes" asp-for="@Model.ThemeId"></select>
+            <label class="form-label filter-label me-2 ps-md-4" asp-for="@Model.ThemeId"></label>
+            <select id="filter-themes" class="form-control-sm filter-control-sm" asp-items="@themes" asp-for="@Model.ThemeId"></select>
         </div>
         <div class="col-sm-12 col-md-3 pt-1">
-            <label class="form-label me-2" asp-for="@Model.DatePeriod"></label>
-            <select id="filter-periods" class="form-control-sm" asp-items="@periods" asp-for="@Model.DatePeriod"></select>
+            <label class="form-label filter-label me-2" asp-for="@Model.DatePeriod"></label>
+            <select id="filter-periods" class="form-control-sm filter-control-sm" asp-items="@periods" asp-for="@Model.DatePeriod"></select>
         </div>
         <div class="col-sm-12 col-md-2 pt-2 pb-2">
             <input id="filter-most-popular" class="form-check-input" type="checkbox" asp-for="@Model.MostPopular">
             <label class="form-check-label" asp-for="@Model.MostPopular"></label>
-        </div>
-        <div class="col-sm-12 col-md-2 pt-2 pb-2">
-            @if(Model.Client != null){<input id="filter-only-favorites" class="form-check-input" type="checkbox"  asp-for="@Model.OnlyFavorites">}
-            else {<input id="only-favorites" class="form-check-input" type="checkbox" disabled>}
-            <label class="form-check-label" asp-for="@Model.OnlyFavorites"></label>
         </div>
         <input id="filter-page-num" hidden asp-for="@Model.Page"/>
     </div>

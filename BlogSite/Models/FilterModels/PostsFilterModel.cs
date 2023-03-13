@@ -21,25 +21,17 @@ namespace BlogSite.Models.FilterModels
         [Display(Name = "Date period")]
         public DatePeriod DatePeriod { get; set; }
 
-        [Display(Name = "Only favorites")]
-        public bool OnlyFavorites { get; set; }
-
         [Display(Name = "Most popular")]
         public bool MostPopular { get; set; }
 
         public int Page { get; set; }
 
-        public User? Client { get; set; }
-
         public PostsFilterModel()
         {
             this.ThemeId = 0;
             this.DatePeriod = DatePeriod.ALL_TIME;
-            this.OnlyFavorites = false;
             this.MostPopular = false;
             this.Page = 1;
-            
-            this.Client = null;
         }
     }
 
