@@ -1,5 +1,6 @@
 ﻿using BlogSite.Models;
 using BlogSite.Models.FilterModels;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BlogSite.Services.Filters.Configurators
@@ -7,10 +8,21 @@ namespace BlogSite.Services.Filters.Configurators
     public class PostsFilterConfigurator
     {
         private readonly BlogSiteContext db;
+        private readonly PostsFilterModel filter_model;
 
-        public PostsFilterConfigurator(BlogSiteContext db)
+        public PostsFilterConfigurator(BlogSiteContext db, PostsFilterModel postsFilterModel)
         {
             this.db = db;
+            this.filter_model = postsFilterModel;
+        }
+
+        public async Task ConfigureFilterAsync()
+        {
+            var themes = await this.GetThemesAsync();
+            var periods = this.GetDatePeriods();
+
+            filter_model.Themes.AddRange(themes);
+            filter_model.DatePeriods = periods;
         }
 
         public async Task<List<SelectListItem>> GetThemesAsync()

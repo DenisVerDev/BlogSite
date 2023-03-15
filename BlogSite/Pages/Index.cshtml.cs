@@ -26,7 +26,7 @@ namespace BlogSite.Pages
         {
             this.db = db;
 
-            this.FilterModel = new PostsFilterModel(); // so, FilterData can be entered when POST
+            this.InitModel();
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -39,18 +39,25 @@ namespace BlogSite.Pages
             return await FilterResult();
         }
 
+        private void InitModel()
+        {
+            this.FilterModel = new PostsFilterModel();
+            this.Posts = new List<PartialPost>();
+            this.Pagination = new PartialPagination();
+        }
+
         private async Task<IActionResult> FilterResult()
         {
             try
             {
                 await this.FilterAsync();
-                await this.ConfigureFilterAsync();
+
+                PostsFilterConfigurator pfc = new PostsFilterConfigurator(db, FilterModel);
+                await pfc.ConfigureFilterAsync();
             }
             catch (Exception ex)
             {
-                this.Posts = new List<PartialPost>();
-                this.Pagination = new PartialPagination();
-
+                this.InitModel();
                 ViewData["ServerMessage"] = new ServerMessage();
             };
 
@@ -68,17 +75,6 @@ namespace BlogSite.Pages
 
             this.Posts = await filter.FilterAsync();
             this.Pagination = new PartialPagination(total_pages, FilterModel.FilterData.Page);
-        }
-
-        private async Task ConfigureFilterAsync()
-        {
-            PostsFilterConfigurator pfc = new PostsFilterConfigurator(db);
-
-            var themes = await pfc.GetThemesAsync();
-            var periods = pfc.GetDatePeriods();
-
-            FilterModel.Themes.AddRange(themes);
-            FilterModel.DatePeriods = periods;
         }
     }
 }

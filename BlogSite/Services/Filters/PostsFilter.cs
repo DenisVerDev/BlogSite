@@ -44,6 +44,11 @@ namespace BlogSite.Services.Filters
                 Query = Query.Where(x => x.AuthorNavigation.Followers.Any(c => c.UserId == client.UserId));
         }
 
+        public void FilterByAuthor(int author_id)
+        {
+            if (author_id > 0) Query = Query.Where(x => x.Author == author_id);
+        }
+
         public override void UsePagination()
         {
             int page_index = FilterData.Page - 1;
