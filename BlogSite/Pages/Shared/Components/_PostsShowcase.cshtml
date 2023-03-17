@@ -1,0 +1,27 @@
+﻿@using BlogSite.Models.PartialModels
+@model PartialPostsShowcase
+
+@if (Model.Posts.Count > 0)
+{
+    @for (int post_index = 0; post_index < Model.ElementsPerPage;)
+    {
+        <div class="row">
+            @for (int j = 0; j < 3; j++, post_index++) // only 3 elements per row possible
+            {
+                <div class="col-sm-12 col-md-4 mt-5">
+                    @if (post_index < Model.Posts.Count)
+                    {
+                        <partial name="Components/_PartialPost" model="@Model.Posts[post_index]" />
+                    }
+                </div>
+            }
+        </div>
+    }
+
+}
+else
+{
+    <div class="mt-5">
+        <partial name="Components/_NoResults" />
+    </div>
+}

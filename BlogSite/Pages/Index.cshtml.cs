@@ -11,14 +11,12 @@ namespace BlogSite.Pages
 {
     public class IndexModel : PageModel
     {
-        private const int ElementsPerPage = 9;
-
         private readonly BlogSiteContext db;
 
         [BindProperty]
         public PostsFilterModel FilterModel { get; set; }
 
-        public List<PartialPost> Posts { get; private set; }
+        public PartialPostsShowcase PostsShowcase { get; private set; }
 
         public PartialPagination Pagination { get; private set; }
 
@@ -42,7 +40,7 @@ namespace BlogSite.Pages
         private void InitModel()
         {
             this.FilterModel = new PostsFilterModel();
-            this.Posts = new List<PartialPost>();
+            this.PostsShowcase = new PartialPostsShowcase();
             this.Pagination = new PartialPagination();
         }
 
@@ -66,14 +64,14 @@ namespace BlogSite.Pages
 
         private async Task FilterAsync()
         {
-            PostsFilter filter = new PostsFilter(this.db.Posts, FilterModel.FilterData, ElementsPerPage);
+            PostsFilter filter = new PostsFilter(this.db.Posts, FilterModel.FilterData, PostsShowcase.ElementsPerPage);
             filter.BuildStandartFilter();
 
             int total_pages = await filter.GetTotalPagesAsync();
 
             filter.UsePagination();
 
-            this.Posts = await filter.FilterAsync();
+            this.PostsShowcase.Posts = await filter.FilterAsync();
             this.Pagination = new PartialPagination(total_pages, FilterModel.FilterData.Page);
         }
     }

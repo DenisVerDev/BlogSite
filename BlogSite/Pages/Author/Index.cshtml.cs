@@ -11,8 +11,6 @@ namespace BlogSite.Pages.Author
 {
     public class IndexModel : PageModel
     {
-        private const int ElementsPerPage = 9;
-
         private readonly BlogSiteContext db;
 
         private User? Client { get; set; }
@@ -20,7 +18,7 @@ namespace BlogSite.Pages.Author
         [BindProperty]
         public PostsFilterModel FilterModel { get; set; }
 
-        public List<PartialPost> Posts { get; private set; }
+        public PartialPostsShowcase PostsShowcase { get; private set; }
 
         public PartialPagination Pagination { get; private set; }
 
@@ -50,7 +48,7 @@ namespace BlogSite.Pages.Author
         private void InitModel()
         {
             this.FilterModel = new PostsFilterModel();
-            this.Posts = new List<PartialPost>();
+            this.PostsShowcase = new PartialPostsShowcase();
             this.Pagination = new PartialPagination();
         }
 
@@ -103,7 +101,7 @@ namespace BlogSite.Pages.Author
 
         private async Task FilterAsync(int author_id)
         {
-            PostsFilter filter = new PostsFilter(this.db.Posts, FilterModel.FilterData, ElementsPerPage);
+            PostsFilter filter = new PostsFilter(this.db.Posts, FilterModel.FilterData, PostsShowcase.ElementsPerPage);
             filter.BuildStandartFilter();
             filter.FilterByAuthor(author_id);
 
@@ -111,7 +109,7 @@ namespace BlogSite.Pages.Author
 
             filter.UsePagination();
 
-            this.Posts = await filter.FilterAsync();
+            this.PostsShowcase.Posts = await filter.FilterAsync();
             this.Pagination = new PartialPagination(total_pages, FilterModel.FilterData.Page);
         }
     }
