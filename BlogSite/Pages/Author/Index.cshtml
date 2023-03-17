@@ -1,4 +1,67 @@
 ﻿@page
 @model BlogSite.Pages.Author.IndexModel
 @{
+    ViewData["Title"] = Model.Author != null ? Model.Author.AuthorName : "No results";
+}
+
+@section Css{
+    <link rel="stylesheet" href="~/css/posts_filter.css" />
+    <link rel="stylesheet" href="~/css/partial_post.css" />
+}
+
+@if(Model.Author != null)
+{
+    <div class="container bg-secondary text-light rounded-3 p-3 mt-3">
+        <div class="row mb-2">
+            <div class="col-md-2 w-auto">
+                <h5>@Model.Author.AuthorName</h5>
+            </div>
+            @if (Model.IsAuthenticated && !Model.IsClientBlog)
+            {
+                <div class="col-md-2 w-auto" style="margin-top: -1px;">
+                    @if (!Model.Author.IsFollowed)
+                    {
+                        <button id="btn-auth-follow" class="btn btn-sm btn-light rounded-3">Follow</button>
+                    }
+                    else
+                    {
+                        <button id="btn-auth-unfollow" class="btn btn-sm btn-danger rounded-3">Unfollow</button>
+                    }
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-2 w-auto">
+                <h6>#@Model.Author.AuthorId</h6>
+            </div>
+            <div class="col-md-2 w-auto">
+                <h6>Followers: @Model.Author.TotalFollowers</h6>
+            </div>
+            <div class="col-md-2 w-auto">
+                <h6>Following: @Model.Author.TotalFollowing</h6>
+            </div>
+            <div class="col-md-2 w-auto">
+                <h6>Likes: @Model.Author.TotalLikes</h6>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-4">
+        <partial name="Components/_PostsFilter" model="@Model.FilterModel" />
+        <partial name="Components/_PostsShowcase" model="@Model.PostsShowcase" />
+        @if (Model.Pagination.TotalPages > 1)
+        {
+            <partial name="Components/_Pagination" model="@Model.Pagination" />
+        }
+    </div>
+}
+else
+{
+    <div class="container mt-5">
+        <partial name="Components/_NoResults" />
+    </div>
+}
+
+@section Scripts{
+    <script src="~/js/posts_filter.js"></script>
+    <script src="~/js/pagination.js"></script>
 }
