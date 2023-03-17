@@ -8,16 +8,16 @@
         </div>
         <div class="col-sm-12 col-md-3 pt-1">
             <label class="form-label filter-label me-2 ps-md-4" asp-for="@Model.FilterData.ThemeId"></label>
-            <select id="filter-themes" class="form-control-sm filter-control-sm" asp-items="@Model.Themes" asp-for="@Model.FilterData.ThemeId"></select>
+            <select id="filter-themes" class="form-control-sm filter-control-sm filter-input" asp-items="@Model.Themes" asp-for="@Model.FilterData.ThemeId"></select>
         </div>
         <div class="col-sm-12 col-md-3 pt-1">
             <label class="form-label filter-label me-2" asp-for="@Model.FilterData.DatePeriod"></label>
-            <select id="filter-periods" class="form-control-sm filter-control-sm" asp-items="@Model.DatePeriods" asp-for="@Model.FilterData.DatePeriod"></select>
+            <select id="filter-periods" class="form-control-sm filter-control-sm filter-input" asp-items="@Model.DatePeriods" asp-for="@Model.FilterData.DatePeriod"></select>
         </div>
         <div class="col-sm-12 col-md-2 pt-2 pb-2">
-            <input id="filter-most-popular" class="form-check-input" type="checkbox" asp-for="@Model.FilterData.MostPopular">
+            <input id="filter-most-popular" class="form-check-input filter-input" type="checkbox" asp-for="@Model.FilterData.MostPopular">
             <label class="form-check-label" asp-for="@Model.FilterData.MostPopular"></label>
         </div>
-        <input id="filter-page-num" hidden asp-for="@Model.FilterData.Page" />
+        <input id="filter-page-num" class="filter-input" hidden asp-for="@Model.FilterData.Page" />
     </div>
 </form>

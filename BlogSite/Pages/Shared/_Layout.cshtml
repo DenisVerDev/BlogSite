@@ -55,8 +55,8 @@
                             <ul class="dropdown-menu" id="lol">
                                 @if (client != null)
                                 {
-                                    <li><a class="dropdown-item" asp-area="" asp-page="/Profile">Profile</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-page="/Profile/MyBlog">My blog</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-page="/Author/Index" asp-route-id="@client.UserId">My blog</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-page="/Settings">Settings</a></li>
                                     <li><a class="dropdown-item" id="btn-logout" asp-area="">Logout</a></li>
                                 }
                                 else
