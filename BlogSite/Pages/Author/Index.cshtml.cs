@@ -37,21 +37,14 @@ namespace BlogSite.Pages.Author
             this.InitModel();
         }
 
-        public async Task<IActionResult> OnGetAsync()
-        {
-            this.InitClient();
-            
-            if(this.IsAuthenticated) 
-                return await this.BlogResult(this.Client!.UserId);
-
-            return RedirectToPage("../Index");
-        }
-
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            this.InitClient();
+            return await this.RequestHandlerResult(id);
+        }
 
-            return await this.BlogResult(id);
+        public async Task<IActionResult> OnPostAsync(int id)
+        {
+            return await this.RequestHandlerResult(id);
         }
 
         private void InitModel()
@@ -65,6 +58,19 @@ namespace BlogSite.Pages.Author
         {
             ClientService clientService = new ClientService(TempData);
             this.Client = clientService.GetDeserializedClient();
+        }
+
+        private async Task<IActionResult> RequestHandlerResult(int author_id)
+        {
+            this.InitClient();
+
+            if(author_id <= 0)
+            {
+                if (IsAuthenticated) author_id = this.Client!.UserId;
+                else return RedirectToPage("../Authentication/Index");
+            }
+
+            return await BlogResult(author_id);
         }
 
         private async Task<IActionResult> BlogResult(int author_id)
@@ -91,7 +97,7 @@ namespace BlogSite.Pages.Author
 
         private async Task InitAuthorAsync(int author_id)
         {
-            AuthorService authorService = new AuthorService(this.db);
+            AuthorService authorService = new AuthorService(this.db, this.Client);
             this.Author = await authorService.GetPartialAuthorAsync(author_id);
         }
 

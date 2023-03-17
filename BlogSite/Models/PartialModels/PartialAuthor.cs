@@ -7,5 +7,6 @@
         public int TotalFollowers { get; set; }
         public int TotalFollowing { get; set; }
         public int TotalLikes { get; set; }
+        public bool IsFollowed { get; set; }
     }
 }

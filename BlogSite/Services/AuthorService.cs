@@ -7,10 +7,12 @@ namespace BlogSite.Services
     public class AuthorService
     {
         private readonly BlogSiteContext db;
+        private readonly User? client;
 
-        public AuthorService(BlogSiteContext db)
+        public AuthorService(BlogSiteContext db, User? client)
         {
             this.db = db;
+            this.client = client;
         }
 
         public async Task<PartialAuthor?> GetPartialAuthorAsync(int author_id)
@@ -22,15 +24,17 @@ namespace BlogSite.Services
                     AuthorName = x.Username,
                     TotalFollowers = x.Followers.Count,
                     TotalFollowing = x.Authors.Count,
-                    TotalLikes = x.LikedPosts.Count
+                    TotalLikes = x.LikedPosts.Count,
+                    IsFollowed = client != null ? x.Followers.Any(c=>c.UserId == client.UserId) : false
                 }).FirstOrDefaultAsync();
 
             return author;
         }
 
-        public async Task<bool> FollowAsync(int client_id, int author_id, bool follow_status)
+        // to rework and test later
+        public async Task<bool> FollowAsync(int author_id, bool follow_status)
         {
-            var client = await this.db.Users.FindAsync(client_id);
+            var client = await this.db.Users.FindAsync(this.client?.UserId);
             if(client != null)
             {
                 var author = await this.db.Users.FindAsync(author_id);
