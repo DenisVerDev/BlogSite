@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddAntiforgery(x => x.HeaderName = "XSRF-TOKEN");
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddDbContext<BlogSiteContext>(options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("BlogSiteConnection")

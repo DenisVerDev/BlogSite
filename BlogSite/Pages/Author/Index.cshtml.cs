@@ -45,6 +45,28 @@ namespace BlogSite.Pages.Author
             return await this.RequestHandlerResult(id);
         }
 
+        public async Task<IActionResult> OnPostFollowAsync(int author_id, bool new_follow_status)
+        {
+            try
+            {
+                this.InitClient();
+
+                if (IsAuthenticated && this.Client!.UserId != author_id)
+                {
+                    AuthorService authorService = new AuthorService(this.db, this.Client);
+                    bool result = await authorService.FollowAsync(author_id, new_follow_status);
+
+                    return Partial("Components/_ButtonFollow", result);
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return Partial("Components/_ButtonFollow", !new_follow_status); // returns the previous(reverse) follow status 
+        }
+
         private void InitModel()
         {
             this.FilterModel = new PostsFilterModel();

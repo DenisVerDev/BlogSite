@@ -31,25 +31,34 @@ namespace BlogSite.Services
             return author;
         }
 
-        // to rework and test later
-        public async Task<bool> FollowAsync(int author_id, bool follow_status)
+        public async Task<bool> FollowAsync(int author_id, bool new_follow_status)
         {
-            var client = await this.db.Users.FindAsync(this.client?.UserId);
-            if(client != null)
-            {
-                var author = await this.db.Users.FindAsync(author_id);
-                if(author != null)
+            try
+            { 
+                var db_client = await this.db.Users.Where(x => x.UserId == this.client.UserId)
+                    .Include(x => x.Authors)
+                    .FirstOrDefaultAsync();
+
+                if (db_client != null)
                 {
-                    if (follow_status) client.Authors.Add(author);
-                    else client.Authors.Remove(author);
+                    var db_author = await this.db.Users.FindAsync(author_id);
+                    if (db_author != null)
+                    {
+                        if (new_follow_status) db_client.Authors.Add(db_author);
+                        else db_client.Authors.Remove(db_author);
 
-                    await this.db.SaveChangesAsync();
+                        await this.db.SaveChangesAsync();
 
-                    return true;
+                        return new_follow_status; // returns desired result if operation is successful
+                    }
                 }
             }
+            catch(Exception ex)
+            {
 
-            return false;
+            }
+
+            return !new_follow_status; // returns the previous(reverse) follow status 
         }
     }
 }

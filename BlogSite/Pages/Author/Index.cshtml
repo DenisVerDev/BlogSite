@@ -18,15 +18,8 @@
             </div>
             @if (Model.IsAuthenticated && !Model.IsClientBlog)
             {
-                <div class="col-md-2 w-auto" style="margin-top: -1px;">
-                    @if (!Model.Author.IsFollowed)
-                    {
-                        <button id="btn-auth-follow" class="btn btn-sm btn-light rounded-3">Follow</button>
-                    }
-                    else
-                    {
-                        <button id="btn-auth-unfollow" class="btn btn-sm btn-danger rounded-3">Unfollow</button>
-                    }
+                <div id="btn-follow-container" class="col-md-2 w-auto" style="margin-top: -1px;">
+                    <partial name="Components/_ButtonFollow" model="@Model.Author.IsFollowed" />
                 </div>
             }
         </div>
@@ -53,15 +46,20 @@
             <partial name="Components/_Pagination" model="@Model.Pagination" />
         }
     </div>
+
+    @section Scripts{
+        <script type="text/javascript">
+            var authorId = @Model.Author.AuthorId;
+        </script>
+
+        <script src="~/js/button_follow.js"></script>
+        <script src="~/js/posts_filter.js"></script>
+        @if (Model.Pagination.TotalPages > 1){<script src="~/js/pagination.js"></script>}
+    }
 }
 else
 {
     <div class="container mt-5">
         <partial name="Components/_NoResults" />
     </div>
-}
-
-@section Scripts{
-    <script src="~/js/posts_filter.js"></script>
-    <script src="~/js/pagination.js"></script>
 }
