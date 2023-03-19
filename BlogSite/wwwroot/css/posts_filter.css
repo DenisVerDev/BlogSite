@@ -4,5 +4,5 @@
 
 .filter-control-sm {
     display: inline-block;
-    width: 150px;
+    max-width: 150px;
 }

@@ -1,0 +1,11 @@
+﻿@using BlogSite.Models.PartialModels
+@model List<PartialAuthor>
+
+<div class="list-group favorites-list bg-secondary h-auto">
+    @foreach(var author in Model)
+    {
+        <a class="list-group-item list-group-item-action" asp-page="/Author/Index" asp-route-id="@author.AuthorId">
+            @author.AuthorName
+        </a>
+    }
+</div>

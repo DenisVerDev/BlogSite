@@ -1,0 +1,5 @@
+﻿.favorites-list {
+    max-height: 200px;
+    overflow: hidden;
+    overflow-y: auto;
+}
