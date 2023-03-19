@@ -31,6 +31,26 @@ namespace BlogSite.Services
             return author;
         }
 
+        public async Task<List<PartialAuthor>> GetFavoritesAsync()
+        {
+            if (this.client == null) 
+                return new List<PartialAuthor>();
+
+            var partial_authors = await this.db.Users.Where(x => x.UserId == client.UserId)
+                .SelectMany(x => x.Authors)
+                .Select(x => new PartialAuthor()
+                {
+                    AuthorId = x.UserId,
+                    AuthorName = x.Username,
+                    TotalFollowers = x.Followers.Count,
+                    TotalFollowing = x.Authors.Count,
+                    TotalLikes = x.LikedPosts.Count,
+                    IsFollowed = true
+                }).ToListAsync();
+
+            return partial_authors;
+        }
+
         public async Task<bool> FollowAsync(int author_id, bool new_follow_status)
         {
             try

@@ -37,7 +37,6 @@ namespace BlogSite.Services.Filters
             if (FilterData.MostPopular) Query = Query.OrderByDescending(x => x.Likers.LongCount());
         }
 
-        // to rework and test later
         public void FilterByFavorites(User client)
         {
             if (client != null)
