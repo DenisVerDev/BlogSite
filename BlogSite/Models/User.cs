@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BlogSite.Models;
 
-public partial class User
+public partial class User : IEquatable<User>
 {
     public int UserId { get; set; }
 
@@ -31,4 +31,12 @@ public partial class User
     public virtual ICollection<User> Followers { get; } = new List<User>();
 
     public virtual ICollection<Post> LikedPosts { get; } = new List<Post>();
+
+    public bool Equals(User? other)
+    {
+        if (other is null)
+            return false;
+
+        return UserId == other.UserId && Username == other.Username && Email == other.Email && Password == other.Password;
+    }
 }

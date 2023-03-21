@@ -56,8 +56,8 @@
                                 @if (client != null)
                                 {
                                     <li><a class="dropdown-item" asp-page="/Author/Index" asp-route-id="@client.UserId">My blog</a></li>
-                                    <li><a class="dropdown-item" asp-page="/Settings">Settings</a></li>
-                                    <li><a class="dropdown-item" id="btn-logout">Logout</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Author/Settings">Settings</a></li>
+                                    <li><button class="dropdown-item" id="btn-logout">Logout</button></li>
                                 }
                                 else
                                 {

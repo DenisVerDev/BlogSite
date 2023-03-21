@@ -26,11 +26,11 @@ namespace BlogSite.Pages.Authentication
 
         public async Task<IActionResult> OnPost()
         {
-            ClientService service = new ClientService(TempData);
+            ClientService service = new ClientService(TempData, this.db);
 
             try
             {
-                if(await service.SignInAsync(Client, db, ModelState)) return RedirectToPage("../Index");
+                if(await service.SignInAsync(Client, ModelState)) return RedirectToPage("../Index");
             }
             catch(Exception ex)
             {

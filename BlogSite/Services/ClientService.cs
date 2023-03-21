@@ -10,6 +10,8 @@ namespace BlogSite.Services
     {
         private const string TempKey = "Client";
 
+        private readonly BlogSiteContext? db;
+
         private ITempDataDictionary TempData;
 
         public bool IsAuthenticated
@@ -20,6 +22,13 @@ namespace BlogSite.Services
         public ClientService(ITempDataDictionary TempData)
         {
             this.TempData = TempData;
+            this.db = null;
+        }
+
+        public ClientService(ITempDataDictionary TempData, BlogSiteContext db)
+        {
+            this.TempData = TempData;
+            this.db = db;
         }
 
         public User? GetDeserializedClient()
@@ -44,7 +53,7 @@ namespace BlogSite.Services
             TempData[TempKey] = client != null ? JsonConvert.SerializeObject(client) : null;
         }
 
-        public async Task<bool> LogInAsync(User LoginUser, BlogSiteContext db, ModelStateDictionary ModelState)
+        public async Task<bool> LogInAsync(User LoginUser, ModelStateDictionary ModelState)
         {
             var db_user = await db.Users.Where(x => x.Email == LoginUser.Email).FirstOrDefaultAsync();
 
@@ -60,7 +69,7 @@ namespace BlogSite.Services
             return ModelState.IsValid;
         }
 
-        public async Task<bool> SignInAsync(User SigninUser, BlogSiteContext db, ModelStateDictionary ModelState)
+        public async Task<bool> SignInAsync(User SigninUser, ModelStateDictionary ModelState)
         {
             bool userexisted = await db.Users.AnyAsync(x => x.Email == SigninUser.Email);
             
@@ -75,5 +84,25 @@ namespace BlogSite.Services
 
             return ModelState.IsValid;
         }
+
+        public async Task<bool> UpdateAsync(User UpdateUser)
+        {
+            var db_user = await db.Users.FindAsync(UpdateUser.UserId);
+
+            if(db_user != null)
+            {
+                db_user.Username = UpdateUser.Username;
+                db_user.Password = UpdateUser.Password;
+
+                await db.SaveChangesAsync();
+
+                this.SaveClient(UpdateUser);
+
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }

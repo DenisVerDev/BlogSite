@@ -1,0 +1,35 @@
+﻿@page
+@model BlogSite.Pages.Author.SettingsModel
+@{
+    ViewData["Title"] = "Profile settings";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <form class="p-4 p-md-5 border rounded-3 bg-light" method="post">
+                <h2 class="text-center mb-4">Profile settings</h2>
+                <div class="form-group mb-4">
+                    <label class="form-label" asp-for="@Model.Client.Username"></label>
+                    <input class="form-control" type="text" id="username" placeholder="Change your username" asp-for="@Model.Client.Username">
+                    <span class="text-danger" asp-validation-for="@Model.Client.Username"></span>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="form-label" asp-for="@Model.Client.Email"></label>
+                    <input class="form-control" type="email" id="email" asp-for="@Model.Client.Email" disabled>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="form-label" asp-for="@Model.Client.Password"></label>
+                    <input class="form-control" type="text" id="password" placeholder="Change your password" asp-for="@Model.Client.Password">
+                    <span class="text-danger" asp-validation-for="@Model.Client.Password"></span>
+                </div>
+                <button type="submit" class="btn btn-danger w-100">Save changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}
