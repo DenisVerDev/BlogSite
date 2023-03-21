@@ -1,0 +1,12 @@
+﻿@model ServerMessage
+@{
+    var server_message_model = new PartialInfoModal()
+    {
+        Id = "serverMessageModel",
+        Title = Model.Title,
+        Text = Model.Message,
+        DismissText = "Ok"
+    };
+}
+
+<partial name="Components/Modals/_InfoModal" model="@server_message_model" />

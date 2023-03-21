@@ -1,0 +1,22 @@
+﻿@model PartialActionModal
+@{
+    string btn_dismiss_id = $"btn-{Model.Id}-dismiss";
+    string btn_action_id = $"btn-{Model.Id}-action";
+}
+
+<div class="modal fade" id="@Model.Id" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Model.Title</h5>
+            </div>
+            <div class="modal-body">
+                <p>@Model.Text</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" id="@btn_dismiss_id" data-dismiss="modal">@Model.DismissText</button>
+                <button class="btn btn-danger" type="button" id="@btn_action_id">@Model.ActionText</button>
+            </div>
+        </div>
+    </div>
+</div>

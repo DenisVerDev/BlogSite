@@ -1,0 +1,12 @@
+﻿@{
+    var logout_modal = new PartialActionModal()
+    {
+        Id = "logoutModal",
+        Title = "Are you sure you want to logout?",
+        Text = "Click 'Logout' below if you are ready to end your current session.",
+        DismissText = "No",
+        ActionText = "Logout"
+    };
+}
+
+<partial name="Components/Modals/_ActionModal" model="@logout_modal" />

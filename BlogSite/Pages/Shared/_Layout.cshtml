@@ -1,6 +1,8 @@
 ﻿@{
     ClientService service = new ClientService(TempData);
     User? client = service.GetDeserializedClient();
+
+    var server_message = ViewData["ServerMessage"] as ServerMessage;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -81,8 +83,17 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-    <partial name="_LogoutVerification" />
-    <partial name="_ServerErrorDisplay" />
+    @if(client != null)
+    {
+        <script src="~/js/modals/logout_modal.js"></script>
+        <partial name="Components/Modals/_LogoutModal" />
+    }
+
+    @if(server_message != null)
+    {
+        <script src="~/js/modals/server_message_modal.js"></script>
+        <partial name="Components/Modals/_ServerMessageModal" model="@server_message"/>
+    }
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
