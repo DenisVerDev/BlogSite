@@ -1,0 +1,12 @@
+﻿@{
+    var delete_account_modal = new PartialActionModal()
+    {
+        Id = "deleteAccModal",
+        Title = "Are you sure you want to delete your account?",
+        Text = "Click 'Delete' below and all your personal data will be deleted on our website",
+        DismissText = "No",
+        ActionText = "Delete"
+    };
+
+    <partial name="Components/Modals/_ActionModal" model="@delete_account_modal"/>
+}

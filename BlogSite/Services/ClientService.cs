@@ -95,14 +95,13 @@ namespace BlogSite.Services
             this.SaveClient(UpdateUser);
         }
 
-        // test version
         public async Task DeleteAsync(User DeleteUser)
         {
             this.SaveClient(null); // logout before delete operation
 
-            await db.Users.Where(x => x.UserId == DeleteUser.UserId).SelectMany(x => x.Followers).ExecuteDeleteAsync();
-            await db.Users.Where(x => x.UserId == DeleteUser.UserId).SelectMany(x => x.Authors).ExecuteDeleteAsync();
-            await db.Users.Where(x => x.UserId == DeleteUser.UserId).SelectMany(x => x.LikedPosts).ExecuteDeleteAsync();
+            await db.Database.ExecuteSqlAsync($"delete from LikedPosts where Liker = {DeleteUser.UserId}");
+            await db.Database.ExecuteSqlAsync($"delete from FollowersAuthors where Follower = {DeleteUser.UserId}");
+            
             await db.Posts.Where(x => x.Author == DeleteUser.UserId).ExecuteDeleteAsync();
 
             db.Users.Remove(DeleteUser);

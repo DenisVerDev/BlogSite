@@ -28,7 +28,7 @@ namespace BlogSite.Pages.Author
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostUpdateAsync()
         {
             try
             {
@@ -45,7 +45,7 @@ namespace BlogSite.Pages.Author
             return Page();
         }
 
-        public async Task<bool> OnPostDeleteAsync()
+        public async Task<IActionResult> OnPostDeleteAsync()
         {
             try
             {
@@ -53,16 +53,16 @@ namespace BlogSite.Pages.Author
                 var client = clientService.GetDeserializedClient();
 
                 if (client is null)
-                    return false;
+                    throw new Exception();
 
                 await clientService.DeleteAsync(client);
             }
             catch(Exception ex)
             {
-                return false;
+                return new JsonResult(false);
             }
 
-            return true; // regardless of the result it will redirect to the Authentication/SignIn page
+            return new JsonResult(true);
         }
 
         private bool AnyChanges(ClientService clientService)
