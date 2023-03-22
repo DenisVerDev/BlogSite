@@ -33,7 +33,9 @@ namespace BlogSite.Pages.Author
             try
             {
                 ClientService clientService = new ClientService(TempData, this.db);
-                if (this.AnyChanges(clientService)) await clientService.UpdateAsync(this.Client!);
+                var client = clientService.GetDeserializedClient();
+
+                if (this.AnyChanges(client)) await clientService.UpdateAsync(this.Client!);
 
                 return RedirectToPage();
             }
@@ -65,10 +67,8 @@ namespace BlogSite.Pages.Author
             return new JsonResult(true);
         }
 
-        private bool AnyChanges(ClientService clientService)
+        private bool AnyChanges(User? client)
         {
-            var client = clientService.GetDeserializedClient();
-
             if(client != null)
             {
                 // these properties are not for change, so they must stay the same

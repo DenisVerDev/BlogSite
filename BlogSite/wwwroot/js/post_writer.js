@@ -6,7 +6,7 @@ var toolbar_options = [
     [{ 'header': [1, 2, 3, 4, false] }],
     ['bold', 'italic', 'underline', 'strike'],
     [{ 'color': [] }, { 'background': [] }],
-    ['blockquote', 'code-block', 'link', 'image'],
+    ['blockquote', 'code-block', 'link'],
     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
     [{ 'align': [] }, 'clean'],
 ];
