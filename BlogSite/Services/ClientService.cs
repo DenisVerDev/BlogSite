@@ -85,24 +85,28 @@ namespace BlogSite.Services
             return ModelState.IsValid;
         }
 
-        public async Task<bool> UpdateAsync(User UpdateUser)
+        public async Task UpdateAsync(User UpdateUser)
         {
-            var db_user = await db.Users.FindAsync(UpdateUser.UserId);
+            var entity = db.Users.Attach(UpdateUser);
+            entity.State = EntityState.Modified;
 
-            if(db_user != null)
-            {
-                db_user.Username = UpdateUser.Username;
-                db_user.Password = UpdateUser.Password;
+            await db.SaveChangesAsync();
 
-                await db.SaveChangesAsync();
-
-                this.SaveClient(UpdateUser);
-
-                return true;
-            }
-
-            return false;
+            this.SaveClient(UpdateUser);
         }
 
+        // test version
+        public async Task DeleteAsync(User DeleteUser)
+        {
+            this.SaveClient(null); // logout before delete operation
+
+            await db.Users.Where(x => x.UserId == DeleteUser.UserId).SelectMany(x => x.Followers).ExecuteDeleteAsync();
+            await db.Users.Where(x => x.UserId == DeleteUser.UserId).SelectMany(x => x.Authors).ExecuteDeleteAsync();
+            await db.Users.Where(x => x.UserId == DeleteUser.UserId).SelectMany(x => x.LikedPosts).ExecuteDeleteAsync();
+            await db.Posts.Where(x => x.Author == DeleteUser.UserId).ExecuteDeleteAsync();
+
+            db.Users.Remove(DeleteUser);
+            await db.SaveChangesAsync();
+        }
     }
 }

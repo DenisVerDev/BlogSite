@@ -45,6 +45,26 @@ namespace BlogSite.Pages.Author
             return Page();
         }
 
+        public async Task<bool> OnPostDeleteAsync()
+        {
+            try
+            {
+                ClientService clientService = new ClientService(TempData, this.db);
+                var client = clientService.GetDeserializedClient();
+
+                if (client is null)
+                    return false;
+
+                await clientService.DeleteAsync(client);
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+
+            return true; // regardless of the result it will redirect to the Authentication/SignIn page
+        }
+
         private bool AnyChanges(ClientService clientService)
         {
             var client = clientService.GetDeserializedClient();
