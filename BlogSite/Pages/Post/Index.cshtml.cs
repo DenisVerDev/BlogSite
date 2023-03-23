@@ -1,19 +1,19 @@
 using BlogSite.Models;
+using BlogSite.Models.PartialModels;
 using BlogSite.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using DbM = BlogSite.Models;
 
 namespace BlogSite.Pages.Post
 {
     public class IndexModel : PageModel
     {
-        private readonly DbM.BlogSiteContext db;
+        private readonly BlogSiteContext db;
 
-        public DbM.Post? Post { get; private set; }
+        public PartialPost? Post { get; private set; }
 
-        public DbM.User? Client { get; private set; }
+        public User? Client { get; private set; }
 
         public IndexModel(BlogSiteContext db)
         {
@@ -27,7 +27,8 @@ namespace BlogSite.Pages.Post
                 ClientService clientService = new ClientService(TempData);
                 this.Client = clientService.GetDeserializedClient();
 
-                this.Post = await db.Posts.Where(x => x.PostId == id).Include(x => x.AuthorNavigation).FirstOrDefaultAsync();
+                PostService postService = new PostService(db);
+                this.Post = await postService.GetPartialPostAsync(id);
             }
             catch(Exception ex)
             {
@@ -48,7 +49,7 @@ namespace BlogSite.Pages.Post
                 if (client is null)
                     throw new Exception();
 
-                client.LikedPosts.Add(new DbM.Post() { PostId = id });
+                client.LikedPosts.Add(new Models.Post() { PostId = id });
                 await clientService.UpdateAsync(client);
             }
             catch(Exception ex)
@@ -59,7 +60,7 @@ namespace BlogSite.Pages.Post
             return new JsonResult(true);
         }
 
-        public async Task<JsonResult> OnPostDislikeAsync(int id)
+        public async Task<JsonResult> OnPostUndoLikeAsync(int id)
         {
             try
             {
