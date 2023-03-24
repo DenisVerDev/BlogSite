@@ -13,6 +13,8 @@ namespace BlogSite.Pages.Post
 
         public PartialPost? Post { get; private set; }
 
+        public string? PostContent { get; private set; }
+
         public User? Client { get; private set; }
 
         public IndexModel(BlogSiteContext db)
@@ -86,7 +88,10 @@ namespace BlogSite.Pages.Post
             this.Post = await postService.GetPartialPostAsync(id);
 
             if (this.Client != null && this.Post != null)
+            {
                 this.Post.IsLiked = await postService.GetLikeStatusAsync(this.Client.UserId, id);
+                this.PostContent = await postService.GetContentAsync(id);
+            }
         }
 
         private void InitNoResultModel()

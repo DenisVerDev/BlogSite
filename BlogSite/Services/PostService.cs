@@ -69,5 +69,12 @@ namespace BlogSite.Services
 
             return like_status;
         }
+
+        public async Task<string?> GetContentAsync(int post_id)
+        {
+            var content = await db.Posts.Where(x => x.PostId == post_id).Select(x => x.Content).FirstOrDefaultAsync();
+
+            return content;
+        }
     }
 }
