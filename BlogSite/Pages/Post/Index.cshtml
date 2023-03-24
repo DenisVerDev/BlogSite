@@ -1,5 +1,59 @@
 ﻿@page
+@using Newtonsoft.Json;
 @model BlogSite.Pages.Post.IndexModel
 @{
     ViewData["Title"] = Model.Post != null ? Model.Post.Title : "No results";
+}
+
+@if(Model.Post != null)
+{
+    @section Css{
+        <link rel="stylesheet" href="~/css/post_read.css"/>
+    }
+
+    <div class="container mt-3">
+        <div class="row" id="postread-maininfo">
+            <div class="col-sm-12 col-md-1"></div>
+            <div class="col-sm-12 col-md-8">
+                <h2 class="postread-title">@Model.Post.Title</h2>
+                <div class="row mt-2">
+                    <div class="col-sm-12 col-md-12 d-flex justify-content-between">
+                        <div>
+                            <span class="h6 text-muted">by </span>
+                            <a class="h6 text-muted" asp-page="/Author/Index" asp-route-id="@Model.Post.Author.UserId">@Model.Post.Author.Username</a>
+                        </div>
+                        <div class="likes-container">
+                            <span class="like-button text-danger">
+                                @if(!Model.Post.IsLiked){<partial name="Icons/_LikeIcon"/>}
+                                else{<partial name="Icons/_FillLikeIcon"/>}
+                            </span>
+                            <span class="h6" id="likes-counter">@Model.Post.Likes</span>
+                        </div>
+                        @Html.AntiForgeryToken()
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts{
+        @if (Model.Client != null)
+        {
+            @if (Model.Client.UserId != Model.Post.Author.UserId)
+            {
+                <script type="text/javascript">
+                    var postId = @Model.Post.PostId;
+                    var postlike_status = @JsonConvert.SerializeObject(Model.Post.IsLiked);
+                </script>
+
+                <script src="~/js/postread_like.js"></script>
+            }
+        }
+    }
+}
+else
+{
+    <div class="container mt-5">
+        <partial name="Components/_NoResults"/>
+    </div>
 }

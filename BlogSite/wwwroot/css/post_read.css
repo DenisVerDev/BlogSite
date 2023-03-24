@@ -1,0 +1,14 @@
+﻿.postread-title{
+    overflow-wrap:break-word;
+}
+
+.likes-container {
+    max-width: 200px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+
+.like-button{
+    cursor:pointer;
+}

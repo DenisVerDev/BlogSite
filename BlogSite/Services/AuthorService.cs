@@ -22,7 +22,7 @@ namespace BlogSite.Services
                     AuthorName = x.Username,
                     TotalFollowers = x.Followers.Count,
                     TotalFollowing = x.Authors.Count,
-                    TotalLikes = x.LikedPosts.Count
+                    TotalLikes = x.Posts.SelectMany(c=>c.Likers).Count()
                 }).FirstOrDefaultAsync();
 
             return author;
@@ -38,7 +38,7 @@ namespace BlogSite.Services
                     AuthorName = x.Username,
                     TotalFollowers = x.Followers.Count,
                     TotalFollowing = x.Authors.Count,
-                    TotalLikes = x.LikedPosts.Count,
+                    TotalLikes = x.Posts.SelectMany(c => c.Likers).Count(),
                     IsFollowed = true
                 }).ToListAsync();
 

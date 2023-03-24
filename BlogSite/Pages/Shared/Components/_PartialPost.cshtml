@@ -4,7 +4,7 @@
 <div class="card h-100">
     <div style="height:20vh; background-image:url(@Model.Theme.ThemeImage);"></div>
     <div class="card-body">
-        <a class="h4 card-title" href="#">@Model.Title</a>
+        <a class="h4 card-title" asp-page="/Post/Index" asp-route-id="@Model.PostId">@Model.Title</a>
         <div class="mt-2 mb-1">
             <h6 class="card-subtitle text-muted">Author: </h6>
             <a class="h6 card-subtitle text-muted" asp-page="/Author/Index" asp-route-id="@Model.Author.UserId">@Model.Author.Username</a>
