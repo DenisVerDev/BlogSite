@@ -34,7 +34,9 @@ namespace BlogSite.Services
             }
             else ModelState.AddModelError($"{ModelName}.Title", "You have already created a post with this title!");
 
-            ModelState.Remove($"{ModelName}.AuthorNavigation"); // remove unnecessary check
+            // remove unnecessary checks
+            ModelState.Remove($"{ModelName}.AuthorNavigation");
+            ModelState.Remove($"{ModelName}.ThemeNavigation");
 
             return ModelState.IsValid;
         }
@@ -57,6 +59,15 @@ namespace BlogSite.Services
                 .FirstOrDefaultAsync();
 
             return post;
+        }
+
+        public async Task<bool> GetLikeStatusAsync(int liker_id, int post_id)
+        {
+            var like_status = await db.Users.Where(x => x.UserId == liker_id)
+                .SelectMany(x => x.LikedPosts)
+                .AnyAsync(x => x.PostId == post_id);
+
+            return like_status;
         }
     }
 }

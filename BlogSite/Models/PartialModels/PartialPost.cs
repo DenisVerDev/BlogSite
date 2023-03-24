@@ -9,5 +9,6 @@
         public long Likes { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime LastUpdateDate { get; set; }
+        public bool IsLiked { get; set; } = false;
     }
 }

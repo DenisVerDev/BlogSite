@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using BlogSite.Services;
 using BlogSite.Services.Filters;
 using BlogSite.Services.Filters.Configurators;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogSite.Pages.Author
 {
@@ -32,7 +33,7 @@ namespace BlogSite.Pages.Author
         {
             this.db = db;
 
-            this.InitModel();
+            this.InitEmptyModel();
         }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -45,39 +46,55 @@ namespace BlogSite.Pages.Author
             return await this.RequestHandlerResult(id);
         }
 
-        public async Task<IActionResult> OnPostFollowAsync(int author_id, bool new_follow_status)
+        public async Task<IActionResult> OnPostFollowAsync(int author_id)
         {
             try
             {
                 this.InitClient();
 
-                if (IsAuthenticated && this.Client!.UserId != author_id)
-                {
-                    AuthorService authorService = new AuthorService(this.db, this.Client);
-                    bool result = await authorService.FollowAsync(author_id, new_follow_status);
+                if (!IsAuthenticated || this.Client!.UserId == author_id)
+                    throw new Exception();
 
-                    return Partial("Components/_ButtonFollow", result);
-                }
+                await db.Database.ExecuteSqlAsync($"insert into FollowersAuthors values({this.Client.UserId},{author_id})");
             }
             catch(Exception ex)
             {
-
+                return Partial("Components/_ButtonFollow", false);
             }
 
-            return Partial("Components/_ButtonFollow", !new_follow_status); // returns the previous(reverse) follow status 
+            return Partial("Components/_ButtonFollow", true);
         }
 
-        private void InitModel()
+        public async Task<IActionResult> OnPostUnfollowAsync(int author_id)
         {
-            this.FilterModel = new PostsFilterModel();
-            this.PostsShowcase = new PartialPostsShowcase();
-            this.Pagination = new PartialPagination();
+            try
+            {
+                this.InitClient();
+
+                if (!IsAuthenticated || this.Client!.UserId == author_id)
+                    throw new Exception();
+
+                await db.Database.ExecuteSqlAsync($"delete from FollowersAuthors where Follower = {this.Client.UserId} and Author = {author_id}");
+            }
+            catch(Exception ex)
+            {
+                return Partial("Components/_ButtonFollow", true);
+            }
+
+            return Partial("Components/_ButtonFollow", false);
         }
 
         private void InitClient()
         {
             ClientService clientService = new ClientService(TempData);
             this.Client = clientService.GetDeserializedClient();
+        }
+
+        private void InitEmptyModel()
+        {
+            this.FilterModel = new PostsFilterModel();
+            this.PostsShowcase = new PartialPostsShowcase();
+            this.Pagination = new PartialPagination();
         }
 
         private async Task<IActionResult> RequestHandlerResult(int author_id)
@@ -87,7 +104,7 @@ namespace BlogSite.Pages.Author
             if(author_id <= 0)
             {
                 if (IsAuthenticated) author_id = this.Client!.UserId;
-                else return RedirectToPage("../Authentication/Index");
+                else return RedirectToPage("/Authentication/Index");
             }
 
             return await BlogResult(author_id);
@@ -97,10 +114,14 @@ namespace BlogSite.Pages.Author
         {
             try
             {
-                await this.InitAuthorAsync(author_id);
+                AuthorService authorService = new AuthorService(this.db);
+                this.Author = await authorService.GetPartialAuthorAsync(author_id);
+
                 if (this.Author != null)
                 {
-                    await this.FilterAsync(author_id);
+                    this.Author.IsFollowed = await authorService.GetFollowStatus(this.Client!.UserId, this.Author.AuthorId);
+
+                    await this.FilterAsync();
 
                     PostsFilterConfigurator configurator = new PostsFilterConfigurator(db, FilterModel);
                     await configurator.ConfigureFilterAsync();
@@ -108,24 +129,18 @@ namespace BlogSite.Pages.Author
             }
             catch (Exception ex)
             {
-                this.InitModel();
+                this.InitEmptyModel();
                 ViewData["ServerMessage"] = new ServerMessage();
             }
 
             return Page();
         }
 
-        private async Task InitAuthorAsync(int author_id)
-        {
-            AuthorService authorService = new AuthorService(this.db, this.Client);
-            this.Author = await authorService.GetPartialAuthorAsync(author_id);
-        }
-
-        private async Task FilterAsync(int author_id)
+        private async Task FilterAsync()
         {
             PostsFilter filter = new PostsFilter(this.db.Posts, FilterModel.FilterData, PostsShowcase.ElementsPerPage);
             filter.BuildStandartFilter();
-            filter.FilterByAuthor(author_id);
+            filter.FilterByAuthor(this.Author!.AuthorId);
 
             int total_pages = await filter.GetTotalPagesAsync();
 

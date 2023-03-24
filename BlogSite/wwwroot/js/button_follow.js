@@ -8,11 +8,10 @@
                     $('input:hidden[name="__RequestVerificationToken"]').val())
             },
             url: 'Author/Index?handler=Follow',
-            data: { author_id: authorId, new_follow_status: true },
+            data: { author_id: authorId},
             dataType: 'html',
             success: function (result) {
-                $('#btn-follow-container').empty();
-                $('#btn-follow-container').append(result);
+                $('#btn-follow-container').html(result);
                 $('#btn-auth-unfollow').bind('click', unfollowAuthor); //binding
             },
             error: function (result) {
@@ -28,12 +27,11 @@
                 xhr.setRequestHeader('XSRF-TOKEN',
                     $('input:hidden[name="__RequestVerificationToken"]').val())
             },
-            url: 'Author/Index?handler=Follow',
-            data: { author_id: authorId, new_follow_status: false },
+            url: 'Author/Index?handler=Unfollow',
+            data: { author_id: authorId},
             dataType: 'html',
             success: function (result) {
-                $('#btn-follow-container').empty();
-                $('#btn-follow-container').append(result);
+                $('#btn-follow-container').html(result);
                 $('#btn-auth-follow').bind('click', followAuthor); //binding
             },
             error: function (result) {

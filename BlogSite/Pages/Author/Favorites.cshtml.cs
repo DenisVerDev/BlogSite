@@ -12,6 +12,7 @@ namespace BlogSite.Pages.Author
     public class FavoritesModel : PageModel
     {
         private readonly BlogSiteContext db;
+        private User? Client { get; set; }
 
         [BindProperty]
         public PostsFilterModel FilterModel { get; set; }
@@ -26,7 +27,7 @@ namespace BlogSite.Pages.Author
         {
             this.db = db;
 
-            this.InitModel();
+            this.InitEmptyModel();
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -39,7 +40,13 @@ namespace BlogSite.Pages.Author
             return await this.RequestHandlerResult();
         }
 
-        private void InitModel()
+        private void InitClient()
+        {
+            ClientService clientService = new ClientService(TempData);
+            this.Client = clientService.GetDeserializedClient();
+        }
+
+        private void InitEmptyModel()
         {
             this.FilterModel = new PostsFilterModel();
             this.PostsShowcase = new PartialPostsShowcase();
@@ -49,40 +56,39 @@ namespace BlogSite.Pages.Author
 
         private async Task<IActionResult> RequestHandlerResult()
         {
-            ClientService clientService = new ClientService(TempData);
-            var client = clientService.GetDeserializedClient();
+            this.InitClient();
 
-            if(client != null) return await FavoritesResult(client);
+            if(this.Client != null) return await FavoritesResult();
 
             return RedirectToPage("../Authentication/Index");
         }
 
-        private async Task<IActionResult> FavoritesResult(User client)
+        private async Task<IActionResult> FavoritesResult()
         {
             try
             {
-                AuthorService authorService = new AuthorService(db, client);
-                this.Favorites = await authorService.GetFavoritesAsync();
+                AuthorService authorService = new AuthorService(db);
+                this.Favorites = await authorService.GetFavoritesAsync(this.Client!.UserId);
 
-                await FilterAsync(client);
+                await FilterAsync();
 
                 PostsFilterConfigurator configurator = new PostsFilterConfigurator(db, this.FilterModel);
                 await configurator.ConfigureFilterAsync();
             }
             catch(Exception ex)
             {
-                this.InitModel();
+                this.InitEmptyModel();
                 ViewData["ServerMessage"] = new ServerMessage();
             }
 
             return Page();
         }
 
-        private async Task FilterAsync(User client)
+        private async Task FilterAsync()
         {
             PostsFilter filter = new PostsFilter(this.db.Posts, FilterModel.FilterData, PostsShowcase.ElementsPerPage);
             filter.BuildStandartFilter();
-            filter.FilterByFavorites(client);
+            filter.FilterByFavorites(this.Client!);
 
             int total_pages = await filter.GetTotalPagesAsync();
 

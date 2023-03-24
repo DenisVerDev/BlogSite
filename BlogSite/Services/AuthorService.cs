@@ -7,12 +7,10 @@ namespace BlogSite.Services
     public class AuthorService
     {
         private readonly BlogSiteContext db;
-        private readonly User? client;
 
-        public AuthorService(BlogSiteContext db, User? client)
+        public AuthorService(BlogSiteContext db)
         {
             this.db = db;
-            this.client = client;
         }
 
         public async Task<PartialAuthor?> GetPartialAuthorAsync(int author_id)
@@ -24,19 +22,15 @@ namespace BlogSite.Services
                     AuthorName = x.Username,
                     TotalFollowers = x.Followers.Count,
                     TotalFollowing = x.Authors.Count,
-                    TotalLikes = x.LikedPosts.Count,
-                    IsFollowed = client != null ? x.Followers.Any(c=>c.UserId == client.UserId) : false
+                    TotalLikes = x.LikedPosts.Count
                 }).FirstOrDefaultAsync();
 
             return author;
         }
 
-        public async Task<List<PartialAuthor>> GetFavoritesAsync()
+        public async Task<List<PartialAuthor>> GetFavoritesAsync(int author_id)
         {
-            if (this.client == null) 
-                return new List<PartialAuthor>();
-
-            var partial_authors = await this.db.Users.Where(x => x.UserId == client.UserId)
+            var favorites = await this.db.Users.Where(x => x.UserId == author_id)
                 .SelectMany(x => x.Authors)
                 .Select(x => new PartialAuthor()
                 {
@@ -48,37 +42,16 @@ namespace BlogSite.Services
                     IsFollowed = true
                 }).ToListAsync();
 
-            return partial_authors;
+            return favorites;
         }
 
-        public async Task<bool> FollowAsync(int author_id, bool new_follow_status)
+        public async Task<bool> GetFollowStatus(int follower_id, int author_id)
         {
-            try
-            { 
-                var db_client = await this.db.Users.Where(x => x.UserId == this.client.UserId)
-                    .Include(x => x.Authors)
-                    .FirstOrDefaultAsync();
+            var follow_status = await db.Users.Where(x => x.UserId == follower_id)
+                .SelectMany(x => x.Authors)
+                .AnyAsync(x=>x.UserId == author_id);
 
-                if (db_client != null)
-                {
-                    var db_author = await this.db.Users.FindAsync(author_id);
-                    if (db_author != null)
-                    {
-                        if (new_follow_status) db_client.Authors.Add(db_author);
-                        else db_client.Authors.Remove(db_author);
-
-                        await this.db.SaveChangesAsync();
-
-                        return new_follow_status; // returns desired result if operation is successful
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-
-            }
-
-            return !new_follow_status; // returns the previous(reverse) follow status 
+            return follow_status;
         }
     }
 }

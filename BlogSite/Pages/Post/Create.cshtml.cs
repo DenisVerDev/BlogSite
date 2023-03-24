@@ -30,7 +30,7 @@ namespace BlogSite.Pages.Post
                 return Page();
             }
 
-            return RedirectToPage("../Authentication/Index"); // if not authenticated => redirect to Log In page
+            return RedirectToPage("/Authentication/Index"); // if not authenticated => redirect to Log In page
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -38,12 +38,12 @@ namespace BlogSite.Pages.Post
             try
             {
                 ClientService clientService = new ClientService(TempData);
-                PostService postService = new PostService(db);
-
                 var client = clientService.GetDeserializedClient();
+
+                PostService postService = new PostService(db);
                 this.Post.Author = client.UserId;
 
-                if (await postService.CreatePostAsync(this.Post, ModelState)) return RedirectToPage("../Profile/MyBlog"); // to see all your posts in one place
+                if (await postService.CreatePostAsync(this.Post, ModelState)) return RedirectToPage("/Post/Index",new { id = this.Post.PostId });
             }
             catch (Exception ex)
             {

@@ -24,11 +24,8 @@ namespace BlogSite.Pages.Post
         {
             try
             {
-                ClientService clientService = new ClientService(TempData);
-                this.Client = clientService.GetDeserializedClient();
-
-                PostService postService = new PostService(db);
-                this.Post = await postService.GetPartialPostAsync(id);
+                this.InitClient();
+                await this.InitPostAsync(id);
             }
             catch(Exception ex)
             {
@@ -39,44 +36,57 @@ namespace BlogSite.Pages.Post
             return Page();
         }
 
-        public async Task<JsonResult> OnPostLikeAsync(int id)
+        public async Task<IActionResult> OnPostLikeAsync(int post_id)
         {
             try
             {
-                ClientService clientService = new ClientService(TempData, this.db);
-                var client = clientService.GetDeserializedClient();
+                this.InitClient();
 
-                if (client is null)
+                if (this.Client is null)
                     throw new Exception();
 
-                client.LikedPosts.Add(new Models.Post() { PostId = id });
-                await clientService.UpdateAsync(client);
+                await db.Database.ExecuteSqlAsync($"insert into LikedPosts values({this.Client.UserId},{post_id})");
             }
             catch(Exception ex)
             {
-                return new JsonResult(false);
+                return Partial("Icons/_LikeIcon");
             }
 
-            return new JsonResult(true);
+            return Partial("Icons/_FillLikeIcon");
         }
 
-        public async Task<JsonResult> OnPostUndoLikeAsync(int id)
+        public async Task<IActionResult> OnPostUndoLikeAsync(int post_id)
         {
             try
             {
-                ClientService clientService = new ClientService(TempData);
-                
-                if (!clientService.IsAuthenticated)
+                this.InitClient();
+
+                if (this.Client is null)
                     throw new Exception();
 
-                await db.Database.ExecuteSqlAsync($"delete from LikedPosts where LikedPost = {id}");
+                await db.Database.ExecuteSqlAsync($"delete from LikedPosts where Liker = {this.Client!.UserId} and LikedPost = {post_id}");
             }
             catch(Exception ex)
             {
-                return new JsonResult(false);
+                return Partial("Icons/_FillLikeIcon");
             }
 
-            return new JsonResult(true);
+            return Partial("Icons/_LikeIcon");
+        }
+
+        private void InitClient()
+        {
+            ClientService clientService = new ClientService(TempData);
+            this.Client = clientService.GetDeserializedClient();
+        }
+
+        private async Task InitPostAsync(int id)
+        {
+            PostService postService = new PostService(db);
+            this.Post = await postService.GetPartialPostAsync(id);
+
+            if (this.Client != null && this.Post != null)
+                this.Post.IsLiked = await postService.GetLikeStatusAsync(this.Client.UserId, id);
         }
 
         private void InitNoResultModel()
