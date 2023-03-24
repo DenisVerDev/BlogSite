@@ -54,6 +54,7 @@
                         {
                             <a class="btn btn-sm w-100 btn-success mt-4 mb-3" asp-page="/Post/Edit" asp-route-id="@Model.Post.PostId">Edit</a>
                             <button class="btn btn-sm w-100 btn-danger" id="btn-delete-post">Delete</button>
+                            <partial name="Components/Modals/_DeletePostModal"/>
                         }
                     </div>
                 </div>
@@ -66,14 +67,18 @@
         <script src="~/js/post_reader.js"></script>
         @if (Model.Client != null)
         {
+            <script type="text/javascript">
+                var postId = @Model.Post.PostId;
+                var postlike_status = @JsonConvert.SerializeObject(Model.Post.IsLiked);
+            </script>
+
             @if (Model.Client.UserId != Model.Post.Author.UserId)
             {
-                <script type="text/javascript">
-                    var postId = @Model.Post.PostId;
-                    var postlike_status = @JsonConvert.SerializeObject(Model.Post.IsLiked);
-                </script>
-
                 <script src="~/js/postread_like.js"></script>
+            }
+            else
+            {
+                <script src="~/js/modals/delete_post_modal.js"></script>
             }
         }
     }

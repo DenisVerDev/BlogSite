@@ -1,0 +1,12 @@
+﻿@{
+    var delete_post_modal = new PartialActionModal()
+    {
+                Id = "deletePostModal",
+                Title = "Are you sure you want to delete this post?",
+                Text = "By clicking 'Delete' below your post will be deleted forever without any chance of recovery",
+                DismissText = "No",
+                ActionText = "Delete"
+    };
+
+    <partial name="Components/Modals/_ActionModal" model="@delete_post_modal" />
+}

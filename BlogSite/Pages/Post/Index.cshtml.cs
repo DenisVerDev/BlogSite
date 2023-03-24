@@ -76,6 +76,33 @@ namespace BlogSite.Pages.Post
             return Partial("Icons/_LikeIcon");
         }
 
+        public async Task<IActionResult> OnPostDeleteAsync(int post_id)
+        {
+            try
+            {
+                this.InitClient();
+
+                if (this.Client != null)
+                {
+                    PostService postService = new PostService(db);
+                    this.Post = await postService.GetPartialPostAsync(post_id);
+
+                    if (this.Post != null && this.Client.UserId == this.Post.Author.UserId)
+                    {
+                        await db.Database.ExecuteSqlAsync($"delete from Posts where PostId = {post_id}");
+
+                        return new JsonResult(true);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return new JsonResult(false);
+        }
+
         private void InitClient()
         {
             ClientService clientService = new ClientService(TempData);
