@@ -119,7 +119,7 @@ namespace BlogSite.Pages.Author
 
                 if (this.Author != null)
                 {
-                    this.Author.IsFollowed = await authorService.GetFollowStatus(this.Client!.UserId, this.Author.AuthorId);
+                    if(this.Client != null) this.Author.IsFollowed = await authorService.GetFollowStatus(this.Client!.UserId, this.Author.AuthorId);
 
                     await this.FilterAsync();
 

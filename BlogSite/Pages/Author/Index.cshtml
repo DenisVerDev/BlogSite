@@ -4,13 +4,13 @@
     ViewData["Title"] = Model.Author != null ? Model.Author.AuthorName : "No results";
 }
 
-@section Css{
-    <link rel="stylesheet" href="~/css/posts_filter.css" />
-    <link rel="stylesheet" href="~/css/partial_post.css" />
-}
-
 @if(Model.Author != null)
 {
+    @section Css{
+        <link rel="stylesheet" href="~/css/posts_filter.css" />
+        <link rel="stylesheet" href="~/css/partial_post.css" />
+    }
+
     <div class="container bg-secondary text-light rounded-3 p-3 mt-3">
         <div class="row mb-2">
             <div class="col-md-2 w-auto">
@@ -48,13 +48,17 @@
     </div>
 
     @section Scripts{
-        <script type="text/javascript">
-            var authorId = @Model.Author.AuthorId;
-        </script>
-
-        <script src="~/js/button_follow.js"></script>
         <script src="~/js/posts_filter.js"></script>
         @if (Model.Pagination.TotalPages > 1){<script src="~/js/pagination.js"></script>}
+
+        @if(Model.IsAuthenticated)
+        {
+            <script type="text/javascript">
+                var authorId = @Model.Author.AuthorId;
+            </script>
+
+            <script src="~/js/button_follow.js"></script>
+        }
     }
 }
 else

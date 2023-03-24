@@ -43,14 +43,29 @@
                     @Html.Raw(Model.PostContent)
                 </div>
             </div>
+            <div class="col-sm-12 col-md-3 mt-2">
+                <div class="card">
+                    <div style="height:20vh; background-image:url(@Model.Post.Theme.ThemeImage);"></div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle text-muted mb-3">Theme: @Model.Post.Theme.ThemeName</h6>
+                        <h6 class="card-subtitle text-muted mb-3">Created: @Model.Post.CreationDate.ToShortDateString()</h6>
+                        <h6 class="card-subtitle text-muted">Last update: @Model.Post.LastUpdateDate.ToShortDateString()</h6>
+                        @if (Model.Client != null && Model.Client.UserId == Model.Post.Author.UserId)
+                        {
+                            <a class="btn btn-sm w-100 btn-success mt-4 mb-3" asp-page="/Post/Edit" asp-route-id="@Model.Post.PostId">Edit</a>
+                            <button class="btn btn-sm w-100 btn-danger" id="btn-delete-post">Delete</button>
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     @section Scripts{
+        <script src="~/lib/quill/js/quill.min.js"></script>
+        <script src="~/js/post_reader.js"></script>
         @if (Model.Client != null)
         {
-            <script src="~/lib/quill/js/quill.min.js"></script>
-            <script src="~/js/post_reader.js"></script>
             @if (Model.Client.UserId != Model.Post.Author.UserId)
             {
                 <script type="text/javascript">
