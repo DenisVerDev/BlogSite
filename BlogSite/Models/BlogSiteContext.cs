@@ -21,17 +21,13 @@ public partial class BlogSiteContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=localhost;Database=BlogSite;Trusted_Connection=True;Encrypt=false;");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Post>(entity =>
         {
-            entity.HasKey(e => new { e.Title, e.Author }).HasName("PK_Post");
+            entity.HasKey(e => e.PostId).HasName("PK_Post");
 
-            entity.HasIndex(e => e.PostId, "UK_PostId").IsUnique();
+            entity.HasIndex(e => new { e.Title, e.Author }, "UK_PostTitleAuthor").IsUnique();
 
             entity.Property(e => e.Title).HasMaxLength(100);
             entity.Property(e => e.CreationDate).HasColumnType("date");
@@ -106,7 +102,6 @@ public partial class BlogSiteContext : DbContext
                 .UsingEntity<Dictionary<string, object>>(
                     "LikedPost",
                     r => r.HasOne<Post>().WithMany()
-                        .HasPrincipalKey("PostId")
                         .HasForeignKey("LikedPost1")
                         .HasConstraintName("FK_LPPost"),
                     l => l.HasOne<User>().WithMany()
