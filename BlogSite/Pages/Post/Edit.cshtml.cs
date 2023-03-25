@@ -60,11 +60,10 @@ namespace BlogSite.Pages.Post
                 IsOwner = db_post.Author == Client.UserId;
                 if (IsOwner)
                 {
-                    this.Post.PostId = id;
-                    this.Post.Author = Client.UserId;
+                    this.UpdateAttachedPost(db_post);
 
                     PostService postService = new PostService(db);
-                    if (await postService.UpdatePostAsync(Post, ModelState)) return RedirectToPage("/Post/Index", new { id });
+                    if (await postService.UpdatePostAsync(db_post, ModelState)) return RedirectToPage("/Post/Index", new { id });
 
                     await this.InitThemesAsync();
                 }
@@ -76,6 +75,13 @@ namespace BlogSite.Pages.Post
             }
 
             return Page();
+        }
+
+        private void UpdateAttachedPost(Models.Post db_post)
+        {
+            db_post.Title = Post.Title;
+            db_post.Theme = Post.Theme;
+            db_post.Content = Post.Content;
         }
 
         private void InitClient()
