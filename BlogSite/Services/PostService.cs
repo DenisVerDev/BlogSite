@@ -41,6 +41,24 @@ namespace BlogSite.Services
             return ModelState.IsValid;
         }
 
+        public async Task<bool> UpdatePostAsync(Post post, ModelStateDictionary ModelState)
+        {
+            if (!await db.Posts.AnyAsync(x => x.Author == post.Author && x.Title == post.Title && x.PostId != post.PostId))
+            {
+                post.LastUpdateDate = DateTime.Now;
+
+                db.Posts.Update(post);
+                await db.SaveChangesAsync();
+            }
+            else ModelState.AddModelError($"{ModelName}.Title", "You already have another post with this title!");
+
+            // remove unnecessary checks
+            ModelState.Remove($"{ModelName}.AuthorNavigation");
+            ModelState.Remove($"{ModelName}.ThemeNavigation");
+
+            return ModelState.IsValid;
+        }
+
         public async Task<PartialPost?> GetPartialPostAsync(int id)
         {
             ThemesService themesService = new ThemesService();
