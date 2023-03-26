@@ -22,13 +22,13 @@ This project is my first attempt at working with APS.NET Core Razor Pages techno
 
 ## Some screenshots:
 ### Main page:
-![Main page](/Screenshots/Main_page.png)
+![Main page](/Screenshots/Main_page.png?raw=true)
 
 ### Favorites page:
-![Favorites page](/Screenshots/Favorites_page.png)
+![Favorites page](/Screenshots/Favorites_page.png?raw=true)
 
 ### Post creation page:
-![Post creation page](/Screenshots/PostCreate_page.png)
+![Post creation page](/Screenshots/PostCreate_page.png?raw=true)
 
 ### Post reading page:
-![Post reading page](/Screenshots/PostRead1_page.png)
+![Post reading page](/Screenshots/PostRead1_page.png?raw=true)
