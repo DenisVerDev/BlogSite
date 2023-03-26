@@ -114,10 +114,10 @@ namespace BlogSite.Pages.Post
             PostService postService = new PostService(db);
             this.Post = await postService.GetPartialPostAsync(id);
 
-            if (this.Client != null && this.Post != null)
+            if(this.Post != null)
             {
-                this.Post.IsLiked = await postService.GetLikeStatusAsync(this.Client.UserId, id);
                 this.PostContent = await postService.GetContentAsync(id);
+                if(this.Client != null) this.Post.IsLiked = await postService.GetLikeStatusAsync(this.Client.UserId, id);
             }
         }
 
