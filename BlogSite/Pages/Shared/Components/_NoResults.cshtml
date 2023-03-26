@@ -1,5 +1,10 @@
-﻿<div class="row justify-content-center">
+﻿@model string
+@{
+    string text = Model ?? "No Results";
+}
+
+<div class="row justify-content-center">
     <div class="col-sm-12 col-md-12 text-center">
-        <h1 class="text-muted">No results</h1>
+        <h1 class="text-muted">@text</h1>
     </div>
 </div>

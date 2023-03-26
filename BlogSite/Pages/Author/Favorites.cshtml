@@ -4,14 +4,14 @@
     ViewData["Title"] = "Favorites";
 }
 
-@section Css{
-    <link rel="stylesheet" href="~/css/posts_filter.css" />
-    <link rel="stylesheet" href="~/css/partial_post.css" />
-    <link rel="stylesheet" href="~/css/favorites_list.css" />
-}
-
 @if(Model.Favorites.Count > 0)
 {
+    @section Css{
+        <link rel="stylesheet" href="~/css/posts_filter.css" />
+        <link rel="stylesheet" href="~/css/partial_post.css" />
+        <link rel="stylesheet" href="~/css/favorites_list.css" />
+    }
+
     <div class="container mt-4">
         <div class="row">
             <div class="col-sm-12 col-md-2 pe-4 mb-4">
@@ -42,6 +42,6 @@
 else
 {
     <div class="container mt-5">
-        <partial name="Components/_NoResults" />
+        <partial name="Components/_NoResults" model="@String.Format("You don't follow anyone")"/>
     </div>
 }
