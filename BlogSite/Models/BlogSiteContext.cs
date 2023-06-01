@@ -116,6 +116,18 @@ public partial class BlogSiteContext : DbContext
                     });
         });
 
+        modelBuilder.Entity<Role>(entity => 
+        {
+            entity.HasKey(e => e.RoleId).HasName("PK_Role");
+
+            entity.HasIndex(e => e.RoleName, "UK_RoleName").IsUnique();
+
+            entity.Property(e => e.RoleId).ValueGeneratedOnAdd();
+            entity.Property(e => e.RoleName)
+                  .HasMaxLength(100)
+                  .IsUnicode(false);
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
 
