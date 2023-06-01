@@ -50,11 +50,19 @@
                         <h6 class="card-subtitle text-muted mb-3">Theme: @Model.Post.Theme.ThemeName</h6>
                         <h6 class="card-subtitle text-muted mb-3">Created: @Model.Post.CreationDate.ToShortDateString()</h6>
                         <h6 class="card-subtitle text-muted">Last update: @Model.Post.LastUpdateDate.ToShortDateString()</h6>
-                        @if (Model.Client != null && Model.Client.UserId == Model.Post.Author.UserId)
+                        @if(Model.Client != null)
                         {
-                            <a class="btn btn-sm w-100 btn-success mt-4 mb-3" asp-page="/Post/Edit" asp-route-id="@Model.Post.PostId">Edit</a>
-                            <button class="btn btn-sm w-100 btn-danger" id="btn-delete-post">Delete</button>
-                            <partial name="Components/Modals/_DeletePostModal"/>
+                            @if (Model.Client.UserId == Model.Post.Author.UserId)
+                            {
+                                <a class="btn btn-sm w-100 btn-success mt-4 mb-3" asp-page="/Post/Edit" asp-route-id="@Model.Post.PostId">Edit</a>
+                                <button class="btn btn-sm w-100 btn-danger" id="btn-delete-post">Delete</button>
+                                <partial name="Components/Modals/_DeletePostModal" />
+                            }
+                            else if(Model.IsAdmin)
+                            {
+                                <button class="btn btn-sm w-100 btn-danger mt-4 mb-3" id="btn-delete-post">Delete</button>
+                                <partial name="Components/Modals/_DeletePostModal" />
+                            }
                         }
                     </div>
                 </div>
@@ -68,6 +76,7 @@
         @if (Model.Client != null)
         {
             <script type="text/javascript">
+                var authorId = @Model.Post.Author.UserId;
                 var postId = @Model.Post.PostId;
                 var postlike_status = @JsonConvert.SerializeObject(Model.Post.IsLiked);
             </script>
@@ -76,7 +85,8 @@
             {
                 <script src="~/js/postread_like.js"></script>
             }
-            else
+
+            if (Model.Client.UserId == Model.Post.Author.UserId || Model.IsAdmin)
             {
                 <script src="~/js/modals/delete_post_modal.js"></script>
             }

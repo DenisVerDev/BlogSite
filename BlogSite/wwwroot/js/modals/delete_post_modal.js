@@ -18,7 +18,7 @@
             data: { post_id: postId },
             dataType: 'json',
             complete: function () {
-                window.location.href = '/Author/Index';
+                window.location.href = '/Author?id=' + authorId;
             }
         });
     });

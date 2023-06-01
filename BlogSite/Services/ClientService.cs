@@ -3,6 +3,7 @@ using BlogSite.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace BlogSite.Services
 {
@@ -106,6 +107,12 @@ namespace BlogSite.Services
 
             db.Users.Remove(DeleteUser);
             await db.SaveChangesAsync();
+        }
+
+        // poor admin functionality is just to make it seems that my website has roles
+        public async Task<bool> GetIsAdminAsync(User client)
+        {
+            return await db.Roles.Where(x => x.RoleId == 1).SelectMany(x => x.Users).AnyAsync(x => x.UserId == client.UserId);
         }
     }
 }

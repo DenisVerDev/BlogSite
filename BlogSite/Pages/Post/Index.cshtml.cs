@@ -17,6 +17,8 @@ namespace BlogSite.Pages.Post
 
         public User? Client { get; private set; }
 
+        public bool IsAdmin { get; private set; }
+
         public IndexModel(BlogSiteContext db)
         {
             this.db = db;
@@ -26,7 +28,7 @@ namespace BlogSite.Pages.Post
         {
             try
             {
-                this.InitClient();
+                await this.InitClientAsync();
                 await this.InitPostAsync(id);
             }
             catch(Exception ex)
@@ -80,14 +82,15 @@ namespace BlogSite.Pages.Post
         {
             try
             {
-                this.InitClient();
+                await this.InitClientAsync();
 
                 if (this.Client != null)
                 {
                     PostService postService = new PostService(db);
                     this.Post = await postService.GetPartialPostAsync(post_id);
 
-                    if (this.Post != null && this.Client.UserId == this.Post.Author.UserId)
+                    if (this.Post != null && 
+                        (this.Client.UserId == this.Post.Author.UserId || this.IsAdmin))
                     {
                         await db.Database.ExecuteSqlAsync($"delete from Posts where PostId = {post_id}");
 
@@ -101,6 +104,14 @@ namespace BlogSite.Pages.Post
             }
 
             return new JsonResult(false);
+        }
+
+        private async Task InitClientAsync()
+        {
+            ClientService clientService = new ClientService(TempData, db);
+            this.Client = clientService.GetDeserializedClient();
+
+            this.IsAdmin = this.Client != null ? await clientService.GetIsAdminAsync(this.Client) : false;
         }
 
         private void InitClient()
@@ -125,6 +136,7 @@ namespace BlogSite.Pages.Post
         {
             this.Post = null;
             this.Client = null;
+            this.IsAdmin = false;
         }
     }
 }
