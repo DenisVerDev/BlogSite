@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -31,6 +32,8 @@ public partial class User : IEquatable<User>
     public virtual ICollection<User> Followers { get; } = new List<User>();
 
     public virtual ICollection<Post> LikedPosts { get; } = new List<Post>();
+
+    public virtual ICollection<Role> Roles { get; } = new List<Role>();
 
     public bool Equals(User? other)
     {

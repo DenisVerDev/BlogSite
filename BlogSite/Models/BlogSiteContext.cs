@@ -114,6 +114,24 @@ public partial class BlogSiteContext : DbContext
                         j.ToTable("LikedPosts");
                         j.IndexerProperty<int>("LikedPost1").HasColumnName("LikedPost");
                     });
+
+            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
+            .UsingEntity<Dictionary<string, object>>(
+                "UserRole",
+                r => r.HasOne<Role>().WithMany()
+                     .HasForeignKey("UserRole1")
+                     .HasConstraintName("FK_URRole"),
+                l => l.HasOne<User>().WithMany()
+                     .HasForeignKey("UserR")
+                     .OnDelete(DeleteBehavior.ClientSetNull)
+                     .HasConstraintName("FK_URUser"),
+                j =>
+                {
+                    j.HasKey("UserR").HasName("PK_UserRole");
+                    j.ToTable("UsersRoles");
+                    j.IndexerProperty<int>("UserRole1").HasColumnName("Role");
+                    j.IndexerProperty<int>("UserR").HasColumnName("User");
+                });
         });
 
         modelBuilder.Entity<Role>(entity => 
